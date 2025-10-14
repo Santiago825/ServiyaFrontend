@@ -1,0 +1,144 @@
+<app-nav></app-nav>
+
+<div class="max-w-6xl mx-auto mt-8 p-6 bg-white rounded-xl shadow-lg">
+
+  <!-- 🔹 PESTAÑAS -->
+  <div class="flex border-b mb-6">
+    <button 
+      (click)="activeTab = 'crear'" 
+      [ngClass]="{'border-b-4 border-blue-600 text-blue-600': activeTab === 'crear'}"
+      class="px-6 py-2 font-semibold text-gray-600 hover:text-blue-600 transition"
+    >
+      Crear Contrato
+    </button>
+    <button 
+      (click)="activeTab = 'revisar'" 
+      [ngClass]="{'border-b-4 border-blue-600 text-blue-600': activeTab === 'revisar'}"
+      class="px-6 py-2 font-semibold text-gray-600 hover:text-blue-600 transition"
+    >
+      Revisar Contratos
+    </button>
+  </div>
+
+  <!-- 🔹 TAB CREAR CONTRATO -->
+  <div *ngIf="activeTab === 'crear'">
+    <h2 class="text-3xl font-bold text-[#7494ec] mb-6 text-center flex items-center justify-center gap-2">
+      <i class="fas fa-file-contract"></i>
+      Crear Nuevo Contrato
+    </h2>
+
+    <form (ngSubmit)="submitContract()" class="space-y-5">
+
+      <!-- Título del proyecto -->
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Título del Proyecto</label>
+        <input type="text" [(ngModel)]="contract.projectTitle" name="projectTitle" required
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
+          placeholder="Ej. Remodelación de Cocina">
+      </div>
+
+      <!-- Select Colaborador -->
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Colaborador</label>
+        <select [(ngModel)]="contract.collaborator" name="collaborator" required
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+          <option value="" disabled selected>Selecciona un colaborador</option>
+          <option *ngFor="let c of colaboradores" [value]="c.nombre">{{ c.nombre }}</option>
+        </select>
+      </div>
+
+      <!-- Fechas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Fecha de Inicio</label>
+          <input type="date" [(ngModel)]="contract.startDate" name="startDate" required
+            class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Fecha de Finalización</label>
+          <input type="date" [(ngModel)]="contract.endDate" name="endDate" required
+            class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+        </div>
+      </div>
+
+      <!-- Dirección -->
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Dirección del Proyecto</label>
+        <input type="text" [(ngModel)]="contract.address" name="address" required
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
+          placeholder="Ej. Calle 123 #45-67">
+      </div>
+
+      <!-- Descripción -->
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Descripción</label>
+        <textarea [(ngModel)]="contract.description" name="description" rows="4" required
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
+          placeholder="Describe el alcance del proyecto..."></textarea>
+      </div>
+
+      <!-- Precio -->
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Precio del Contrato (COP)</label>
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">COP</span>
+          <input type="number" [(ngModel)]="contract.price" name="price" min="0" required
+            class="w-full border border-gray-300 rounded-lg p-3 pl-16 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
+            placeholder="0">
+        </div>
+      </div>
+
+      <!-- Documentos adjuntos -->
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Documentos Adjuntos</label>
+        <input type="file" (change)="onFileChange($event)" multiple
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+      </div>
+
+      <!-- Botón enviar -->
+      <div class="text-center mt-4">
+        <button type="submit"
+          class="bg-[#7494ec] text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2">
+          <i class="fas fa-paper-plane"></i>
+          Crear Contrato
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- 🔹 TAB REVISAR CONTRATOS -->
+  <div *ngIf="activeTab === 'revisar'">
+    <h2 class="text-2xl font-bold text-[#7494ec] mb-6 text-center">Contratos Registrados</h2>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+        <thead class="bg-[#7494ec] text-white">
+          <tr>
+            <th class="px-4 py-2 text-left">Título del Proyecto</th>
+            <th class="px-4 py-2 text-left">Colaborador</th>
+            <th class="px-4 py-2 text-left">Dirección</th>
+            <th class="px-4 py-2 text-left">Precio (COP)</th>
+            <th class="px-4 py-2 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of contracts" class="border-b hover:bg-gray-50">
+            <td class="px-4 py-2">{{ c.projectTitle }}</td>
+            <td class="px-4 py-2">{{ c.collaborator }}</td>
+            <td class="px-4 py-2">{{ c.address }}</td>
+            <td class="px-4 py-2">{{ c.price | number }}</td>
+            <td class="px-4 py-2 text-center">
+              <button class="text-[#7494ec] hover:text-blue-700">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<app-footer></app-footer>

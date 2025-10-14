@@ -1,0 +1,7 @@
+export const CONSTANTES = {
+  OK: 'OK',
+  CORREO_EXISTE: 'ERR_USU_DOC_EXI',
+  DOCUMENTO_EXISTE: 'ERR_USU_COR_EXI',
+  CODIGO_RESPUESTA: 'codigoRespuesta',
+  MENSAJE_RESPUESTA: 'mensajeRespuesta'
+}

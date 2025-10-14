@@ -1,0 +1,60 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-contrato',
+  templateUrl: './contrato.component.html',
+  styleUrls: ['./contrato.component.css']
+})
+export class ContratoComponent {
+showContractModal = false;
+  activeTab: 'crear' | 'revisar' = 'crear';
+
+  contract = {
+    projectTitle: '',
+    collaborator: '',
+    startDate: '',
+    endDate: '',
+    address: '',
+    attachments: [],
+    description: '',
+    price: null
+  };
+
+  colaboradores = [
+    { nombre: 'Ana Plomería' },
+    { nombre: 'David Electricista' },
+    { nombre: 'Sofía Pintora' }
+  ];
+
+  // Datos de contratos ya registrados
+  contracts = [
+    { projectTitle: 'Remodelación Cocina', collaborator: 'Ana Plomería', startDate:'2025-10-05', endDate:'2025-10-10', address:'Calle 123 #45-67', description:'Remodelación completa', price:120000, attachments: [] },
+    { projectTitle: 'Pintura Fachada', collaborator: 'Sofía Pintora', startDate:'2025-10-01', endDate:'2025-10-05', address:'Carrera 56 #12-34', description:'Pintura exterior', price:80000, attachments: [] }
+  ];
+
+  showModal = false;
+  selectedContract: any = null;
+
+  submitContract() {
+   // this.contracts.push({ ...this.contract });
+    this.contract = { projectTitle:'', collaborator:'', startDate:'', endDate:'', address:'', attachments:[], description:'', price:null };
+    this.activeTab = 'revisar';
+  }
+
+  openModal(contract: any) {
+    this.selectedContract = contract;
+    this.showModal = true;
+  }
+
+  
+  closeModal() {
+    this.showModal = false;
+    this.selectedContract = null;
+  }
+
+  onFileChange(event: any) {
+    const files = event.target.files;
+    this.contract.attachments = Array.from(files);
+  }
+  
+}

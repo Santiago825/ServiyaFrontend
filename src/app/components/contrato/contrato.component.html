@@ -1,0 +1,101 @@
+<app-nav></app-nav>
+
+<div class="max-w-6xl mx-auto mt-8 p-6 bg-white rounded-xl shadow-lg">
+  <h2 class="text-2xl font-bold text-[#7494ec] mb-6 text-center">
+    Contratos Registrados
+  </h2>
+
+  <div class="overflow-x-auto">
+    <table
+      class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm"
+    >
+      <thead class="bg-[#7494ec] text-white">
+        <tr>
+          <th class="px-4 py-2 text-left">Título del Proyecto</th>
+          <th class="px-4 py-2 text-left">Colaborador</th>
+          <th class="px-4 py-2 text-left">Dirección</th>
+          <th class="px-4 py-2 text-left">Precio (COP)</th>
+          <th class="px-4 py-2 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of contracts" class="border-b hover:bg-gray-50">
+          <td class="px-4 py-2">{{ c.projectTitle }}</td>
+          <td class="px-4 py-2">{{ c.collaborator }}</td>
+          <td class="px-4 py-2">{{ c.address }}</td>
+          <td class="px-4 py-2">{{ c.price | number }}</td>
+          <td class="px-4 py-2 text-center">
+            <button
+              (click)="openContractModal(c)"
+              class="text-[#7494ec] hover:text-blue-700"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  *ngIf="showContractModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4"
+>
+  <!-- Fondo semitransparente -->
+  <div 
+    class="modal-backdrop"
+    (click)="closeContractModal()"
+  ></div>
+
+  <!-- Contenido del modal -->
+  <div
+    @fadeZoom
+    class="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-2 md:mx-0 p-6 md:p-8 z-10 overflow-y-auto"
+    style="max-height: 90vh"
+  >
+    <!-- Botón cerrar -->
+    <button
+      (click)="closeContractModal()"
+      class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold"
+    >
+      &times;
+    </button>
+
+    <!-- Título -->
+    <h2 class="text-xl md:text-4xl font-bold text-[#7494ec] mb-6 text-center">
+      {{ selectedContract?.projectTitle }}
+    </h2>
+
+    <!-- Información del contrato -->
+    <div class="space-y-4 md:space-y-6 text-base md:text-lg">
+      <p><strong>Colaborador:</strong> {{ selectedContract?.collaborator }}</p>
+      <p><strong>Dirección:</strong> {{ selectedContract?.address }}</p>
+      <p><strong>Fecha Inicio:</strong> {{ selectedContract?.startDate }}</p>
+      <p><strong>Fecha Fin:</strong> {{ selectedContract?.endDate }}</p>
+      <p>
+        <strong>Precio:</strong>
+        {{ selectedContract?.price | currency : "COP" : "symbol" }}
+      </p>
+      <p><strong>Descripción:</strong> {{ selectedContract?.description }}</p>
+      <p>
+        <strong>Documentos Adjuntos:</strong>
+        {{ selectedContract?.attachments }}
+      </p>
+    </div>
+
+    <!-- Botón descargar -->
+    <div class="mt-6 md:mt-8 text-center">
+      <button
+        class="bg-[#7494ec] text-white px-6 md:px-8 py-2 md:py-3 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
+        (click)="downloadContract()"
+      >
+        <i class="fas fa-download"></i> Descargar Contrato
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+

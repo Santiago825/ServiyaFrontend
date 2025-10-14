@@ -1,0 +1,42 @@
+<app-nav></app-nav>
+
+<div class="how-it-works-page px-4 py-12 max-w-6xl mx-auto">
+
+  <h1 class="main-title text-3xl md:text-4xl font-bold text-[#7494ec] text-center mb-4">
+    ¿Cómo Funciona <strong>ServiYa</strong>?
+  </h1>
+  <p class="subtitle text-gray-700 text-center mb-12 text-base md:text-lg">
+    Contratar al mejor profesional nunca fue tan sencillo. Sigue estos 4 pasos y resuelve tu necesidad de inmediato.
+  </p>
+
+  <div class="steps-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+    <div 
+      class="step-card bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center hover:shadow-2xl transition duration-300"
+      *ngFor="let step of steps"
+    >
+      <div class="step-icon-wrapper mb-4 relative flex items-center justify-center w-16 h-16 rounded-full bg-[#7494ec]/20 text-[#7494ec] text-2xl">
+        <span class="step-icon">
+          <i [class]="step.icon"></i>  <!-- FontAwesome icon -->
+        </span>
+      </div>
+
+      <h2 class="step-title font-semibold text-lg md:text-xl text-gray-800 mb-2">
+        {{ step.title }}
+      </h2>
+      <p class="step-description text-gray-600 text-sm md:text-base">
+        {{ step.description }}
+      </p>
+    </div>
+
+  </div>
+  
+  <div class="cta-section mt-12 text-center">
+    <a href="/register" class="cta-button bg-[#7494ec] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#5a78d1] transition">
+      ¡Empieza Ahora Mismo!
+    </a>
+  </div>
+
+</div>
+
+<app-footer></app-footer>

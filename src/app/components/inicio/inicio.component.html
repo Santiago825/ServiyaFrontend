@@ -1,0 +1,129 @@
+<app-nav></app-nav>
+<form class="search-bar-container mx-4 sm:mx-8 md:mx-0" (ngSubmit)="onSearch()">
+  <input
+    type="text"
+    placeholder="¿Qué servicio necesitas?"
+    [(ngModel)]="serviceQuery"
+    name="serviceQuery"
+    class="input-service"
+  />
+
+  <button type="submit" class="text-[#7494ec] p-3 transition">
+    <i class="fas fa-search cursor-pointer"></i>
+  </button>
+</form>
+
+<div class="container">
+  <main>
+    <!-- categorias mas usadas -->
+    <section class="categories-section py-10 bg-gray-50">
+      <h2 class="text-3xl font-semibold text-center text-gray-800 mb-8">
+        Explora Nuestras Categorías Principales
+      </h2>
+
+      <div
+        class="category-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto px-4"
+      >
+        <div
+          class="category-item flex flex-col items-center bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition"
+        >
+          <i class="fas fa-brush text-5xl text-blue-500 mb-4"></i>
+          <span class="text-lg font-medium text-gray-700">Limpieza</span>
+        </div>
+
+        <div
+          class="category-item flex flex-col items-center bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition"
+        >
+          <i class="fas fa-bolt text-5xl text-blue-500 mb-4"></i>
+          <span class="text-lg font-medium text-gray-700">Electricistas</span>
+        </div>
+
+        <div
+          class="category-item flex flex-col items-center bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition"
+        >
+          <i class="fas fa-paint-roller text-5xl text-blue-500 mb-4"></i>
+          <span class="text-lg font-medium text-gray-700">Pintores</span>
+        </div>
+
+        <div
+          class="category-item flex flex-col items-center bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition"
+        >
+          <i class="fas fa-dog text-5xl text-blue-500 mb-4"></i>
+          <span class="text-lg font-medium text-gray-700"
+            >Paseadores de Perros</span
+          >
+        </div>
+      </div>
+    </section>
+    <!-- profesionales  -->
+    <section class="professionals-section py-10 bg-gray-50">
+      <h2 class="text-3xl font-semibold text-center text-gray-800 mb-8">
+        Profesionales con mayor raiting
+      </h2>
+
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto px-4"
+      >
+        <div
+          class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center hover:shadow-lg transition"
+          *ngFor="let prof of professionals"
+        >
+          <img
+            [src]="prof.img"
+            [alt]="prof.nombre"
+            class="w-24 h-24 rounded-full object-cover mb-4"
+          />
+          <h3 class="text-lg font-semibold text-gray-800">{{ prof.nombre }}</h3>
+          <p class="text-sm text-gray-500 mb-2">
+            {{ prof.municipio }}, Colombia
+          </p>
+          <span class="text-blue-500 font-medium mb-2">
+            Servicio: {{ prof.servicio }}
+          </span>
+
+          <!-- ⭐ Estrellas dinámicas -->
+          <div class="flex items-center text-yellow-400 mb-2">
+            <ng-container *ngFor="let star of getStars(prof.rating)">
+              <i [ngClass]="star"></i>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="steps-section py-12 bg-gray-50">
+  <h2 class="text-3xl font-semibold text-center text-gray-800 mb-10">
+    Comienza en Solo Tres Pasos
+  </h2>
+
+  <div class="steps-grid grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl mx-auto px-4">
+    <!-- Paso 1 -->
+    <div class="step-item bg-white rounded-2xl shadow-md p-6 flex flex-col items-center text-center hover:shadow-lg transition">
+      <i class="fas fa-search text-5xl text-blue-500 mb-4"></i>
+      <span class="step-number text-4xl font-bold text-blue-600 mb-2">1</span>
+      <h3 class="text-lg font-semibold text-gray-700">Busca el servicio</h3>
+      <p class="text-sm text-gray-500 mt-2">Encuentra fácilmente el profesional ideal según tus necesidades.</p>
+    </div>
+
+    <!-- Paso 2 -->
+    <div class="step-item bg-white rounded-2xl shadow-md p-6 flex flex-col items-center text-center hover:shadow-lg transition">
+      <i class="fas fa-comments text-5xl text-blue-500 mb-4"></i>
+      <span class="step-number text-4xl font-bold text-blue-600 mb-2">2</span>
+      <h3 class="text-lg font-semibold text-gray-700">Chatea con el profesional</h3>
+      <p class="text-sm text-gray-500 mt-2">Comunícate directamente y aclara todos los detalles del servicio.</p>
+    </div>
+
+    <!-- Paso 3 -->
+    <div class="step-item bg-white rounded-2xl shadow-md p-6 flex flex-col items-center text-center hover:shadow-lg transition">
+      <i class="fas fa-handshake text-5xl text-blue-500 mb-4"></i>
+      <span class="step-number text-4xl font-bold text-blue-600 mb-2">3</span>
+      <h3 class="text-lg font-semibold text-gray-700">Contrata y califica</h3>
+      <p class="text-sm text-gray-500 mt-2">Finaliza el trabajo y deja tu valoración para ayudar a otros usuarios.</p>
+    </div>
+  </div>
+</section>
+
+  </main>
+</div>
+
+<app-footer></app-footer>

@@ -1,0 +1,51 @@
+<footer class="bg-[#f9f9f9] shadow-md mt-16">
+  <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+
+    <!-- Logo + Descripción -->
+    <div>
+      <img src="assets/img/Logo_largo.png" alt="Logo" class="w-32 mb-4">
+      <p class="text-gray-600 text-sm">
+        Conecta con los mejores colaboradores en servicios técnicos como 
+        plomería, electricidad, aseo y construcción. Fácil, rápido y seguro.
+      </p>
+    </div>
+
+    <!-- Navegación -->
+    <div>
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Navegación</h3>
+      <ul class="space-y-2">
+        <li><a routerLink="/inicio" routerLinkActive="text-[#7494ec]" class="hover:text-[#7494ec]">Inicio</a></li>
+        <li><a routerLink="/servicios" routerLinkActive="text-[#7494ec]" class="hover:text-[#7494ec]">Servicios</a></li>
+        <li><a routerLink="/chat" routerLinkActive="text-[#7494ec]" class="hover:text-[#7494ec]">Chat</a></li>
+        <li><a routerLink="/comofunciona" routerLinkActive="text-[#7494ec]" class="hover:text-[#7494ec]">Cómo funciona</a></li>
+      </ul>
+    </div>
+
+    <!-- Contacto -->
+    <div>
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Contáctanos</h3>
+      <ul class="space-y-2 text-gray-600 text-sm">
+        <li><i class="fas fa-envelope text-[#7494ec] mr-2"></i> contacto@tuapp.com</li>
+        <li><i class="fas fa-phone text-[#7494ec] mr-2"></i> +57 300 123 4567</li>
+        <li><i class="fas fa-map-marker-alt text-[#7494ec] mr-2"></i> Bogotá, Colombia</li>
+      </ul>
+    </div>
+
+    <!-- Redes sociales -->
+    <div>
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Síguenos</h3>
+      <div class="flex space-x-4 text-xl text-gray-600">
+        <a href="#"><i class="fab fa-facebook hover:text-[#7494ec]"></i></a>
+        <a href="#"><i class="fab fa-twitter hover:text-[#7494ec]"></i></a>
+        <a href="#"><i class="fab fa-instagram hover:text-[#7494ec]"></i></a>
+        <a href="#"><i class="fab fa-linkedin hover:text-[#7494ec]"></i></a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Copyright -->
+  <div class="bg-[#f1f1f1] py-4 text-center text-sm text-gray-600">
+    © {{ currentYear }} TuApp. Todos los derechos reservados.
+  </div>
+</footer>

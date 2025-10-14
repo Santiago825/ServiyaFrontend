@@ -1,0 +1,65 @@
+<app-nav></app-nav>
+
+<div class="chat-container">
+
+  <!-- Lista de chats -->
+ <div class="chat-list-panel" [class.hidden-mobile]="selectedChatId !== null">
+    <div class="chat-header">Chats</div>
+    
+    <div 
+      *ngFor="let chat of chats" 
+      class="chat-item" 
+      [class.active]="chat.id === selectedChatId"
+      (click)="selectChat(chat.id)"
+    >
+      <img [src]="chat.avatar" class="avatar" alt="Avatar">
+      <div class="chat-info">
+        <div class="chat-name">{{ chat.name }}</div>
+        <div class="last-message">{{ chat.lastMessage | slice:0:30 }}...</div>
+      </div>
+      <div *ngIf="chat.unreadCount > 0" class="unread-badge">{{ chat.unreadCount }}</div>
+    </div>
+  </div>
+
+  <!-- Conversación -->
+  <div class="conversation-panel" [class.visible-mobile]="selectedChatId !== null" [@slideFade]="selectedChatId !== null ? 'visible' : 'hidden'">
+
+    <div *ngIf="selectedChatId === null" class="no-chat-selected">
+      Selecciona un chat para comenzar a conversar.
+    </div>
+
+    <ng-container *ngIf="selectedChatId !== null">
+      <div class="conversation-header">
+  <button class="back-button" (click)="selectedChatId = null">
+    &lt;
+  </button>
+  {{ getChatName(selectedChatId) }}
+</div>
+
+      <!-- 📌 Área de mensajes con scroll -->
+      <div class="messages-area">
+        <div 
+          *ngFor="let msg of getMessages(selectedChatId)" 
+          class="message-bubble" 
+          [class.sent]="msg.isUser"
+          [class.received]="!msg.isUser"
+        >
+          {{ msg.text }}
+          <span class="timestamp">{{ msg.time }}</span>
+        </div>
+      </div>
+
+      <!-- Entrada de texto -->
+      <div class="message-input-area">
+        <input 
+          type="text" 
+          placeholder="Escribe un mensaje..."
+          [(ngModel)]="newMessageText"
+          (keydown.enter)="sendMessage()"
+        >
+        <button (click)="sendMessage()">Enviar</button>
+      </div>
+    </ng-container>
+  </div>
+
+</div>

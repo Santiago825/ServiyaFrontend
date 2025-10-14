@@ -1,0 +1,80 @@
+<header class="bg-white shadow-md">
+  <nav class="flex justify-between items-center w-[92%] mx-auto">
+    <div class="h-20 flex justify-center items-center">
+      <img
+        class="w-40 cursor-pointer"
+        src="assets/img/Logo_largo.png"
+        alt="Logo"
+      />
+    </div>
+    <div
+      class="nav-links duration-500 md:static absolute bg-white md:min-h-fit min-h-[60vh] left-0 md:w-auto w-full flex items-center px-5"
+      [ngClass]="{ 'top-[9%]': showMenu, 'top-[-100%]': !showMenu }"
+    >
+      <ul class="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8">
+        <li>
+          <a
+            class="flex items-center gap-2 font-bold hover:text-[#7494ec]"
+            routerLink="/inicio"
+            routerLinkActive="text-[#7494ec]"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fas fa-home"></i> Inicio
+          </a>
+        </li>
+
+        <li>
+          <a
+            class="flex items-center gap-2 font-bold hover:text-[#7494ec]"
+            routerLink="/servicios"
+            routerLinkActive="text-[#7494ec]"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fas fa-cogs"></i> Servicios
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-2 font-bold hover:text-[#7494ec]"
+            routerLink="/contrato"
+            routerLinkActive="text-[#7494ec]"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fas fa-file-contract"></i> Contrato
+          </a>
+        </li>
+
+        <li>
+          <a
+            class="flex items-center gap-2 font-bold hover:text-[#7494ec]"
+            routerLink="/chat"
+            routerLinkActive="text-[#7494ec]"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fas fa-comments"></i> Chat
+          </a>
+        </li>
+
+        <li>
+          <a
+            class="flex items-center gap-2 font-bold hover:text-[#7494ec]"
+            routerLink="/como-funciona"
+            routerLinkActive="text-[#7494ec]"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fas fa-info-circle"></i> Como funciona
+          </a>
+        </li>
+       
+      </ul>
+    </div>
+    <div class="flex items-center gap-6">
+    <button class="bg-[#87acec] text-white px-5 py-2 rounded-full " (click)="cerrarSesion()">Cerrar sesion</button>
+      <ion-icon
+        (click)="onToggleMenu()"
+        [name]="menuIcon"
+        class="text-3xl cursor-pointer md:hidden"
+      ></ion-icon>
+    </div>
+  </nav>
+</header>
