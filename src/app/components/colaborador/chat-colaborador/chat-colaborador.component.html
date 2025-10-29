@@ -1,0 +1,74 @@
+<app-nav-colaborador></app-nav-colaborador>
+
+<div class="chat-container" *ngIf="userData.connected">
+  <!-- 🔹 Lista de miembros -->
+  <div class="member-list" [class.hidden]="isMobileView && tab !== 'CHATROOM'">
+    <h3>Chats</h3>
+    <ul>
+      <li (click)="setTab('CHATROOM')" [class.active]="tab === 'CHATROOM'">
+        🌐 Chat público
+      </li>
+      <li
+        *ngFor="let name of privateChatsArray"
+        (click)="setTab(name)"
+        [class.active]="tab === name"
+      >
+        👤 {{ name }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- 🔹 Chat -->
+  <div class="chat-box" [class.hidden]="isMobileView && tab === 'CHATROOM'">
+    <div class="chat-header">
+      <button *ngIf="isMobileView" class="back-btn" (click)="closeTab()">
+        ⬅
+      </button>
+      <h3 *ngIf="tab === 'CHATROOM'">Chat Público</h3>
+      <h3 *ngIf="tab !== 'CHATROOM'">Chat con {{ tab }}</h3>
+    </div>
+
+    <!-- Chat público -->
+    <ul *ngIf="tab === 'CHATROOM'" class="chat-messages" #publicChatMessages>
+      <li
+        *ngFor="let chat of publicChats"
+        [class.self]="chat.senderName === userData.username"
+      >
+        <div *ngIf="chat.senderName !== userData.username" class="avatar">
+          {{ chat.senderName[0] }}
+        </div>
+        <div class="message">
+          <div class="text">{{ chat.message }}</div>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Chat privado -->
+    <ul *ngIf="tab !== 'CHATROOM'" class="chat-messages" #privateChatMessages>
+      <li
+        *ngFor="let chat of privateChats.get(tab)"
+        [class.self]="chat.senderName === userData.username"
+      >
+        <div *ngIf="chat.senderName !== userData.username" class="avatar">
+          {{ chat.senderName[0] }}
+        </div>
+        <div class="message">
+          <div class="text">{{ chat.message }}</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="send-message">
+      <input
+        type="text"
+        placeholder="Escribe un mensaje..."
+        [(ngModel)]="userData.message"
+        (keydown.enter)="tab === 'CHATROOM' ? sendValue() : sendPrivateValue()"
+      />
+      <button (click)="tab === 'CHATROOM' ? sendValue() : sendPrivateValue()">
+        Enviar
+      </button>
+    </div>
+  </div>
+</div>
+

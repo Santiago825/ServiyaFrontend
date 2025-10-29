@@ -1,22 +1,74 @@
 {
   "VERSION": {
     "1.0.1": "Actualización de versión de la parte front",
- 
-
     "ACTUAL": "1.3.47"
   },
   "BOTON_BUSCAR": "Buscar",
-
-
+  "MENSAJE_INFORMACION": "Información",
+  "BOTON_ACEPTAR": "Aceptar",
+  "CU_LOGIN": {
+    "TITULO_LOGIN": "Login",
+    "TITULO_OLVIDO_CONTRASENA": "olvido contraseña?",
+    "TITULO_REGISTRO": "Registro",
+    "TITULO_NOMBRE_USUARIO_OBLIGATORIO": "El nombre de usuario es obligatorio",
+    "TITULO_EMAIL_OBLIGATORIO": "Debes ingresar un correo válido",
+    "TITULO_CONSTRASENA_OBLIGATORIO": "La contraseña es obligatoria (mínimo 6 caracteres)",
+    "TITULO_BIENVENIDO_VUELTA": "Bienvenido de vuelta!",
+    "TITULO_YA_TIENES_CUENTA": "Ya tienes una cuenta?",
+    "TITULO_BIENVENIDO": "Hola, Bienvenido",
+    "TIUTLO_NO_TIENES_CUENTA": "No tienes una cuenta?",
+    "TITULO_REGISTRARSE": "Registrarse",
+    "TITULO_COMPLETE_LOS_CAMPOS": "Por favor completa todos los campos antes de continuar"
+  },
+  "CU_REGISTRO": {
+    "TITULO_REGISTRO": "Registro de usuario",
+    "ALT_FOTO": "Foto de usuario",
+    "SUBIR_FOTO": "Subir foto",
+    "ELIMINAR_FOTO": "Eliminar foto",
+    "LABEL_NOMBRE": "Nombre",
+    "PLACEHOLDER_NOMBRE": "Nombre",
+    "ERROR_NOMBRE": "El nombre es obligatorio",
+    "LABEL_APELLIDO": "Apellido",
+    "PLACEHOLDER_APELLIDO": "Apellido",
+    "ERROR_APELLIDO": "El apellido es obligatorio",
+    "LABEL_TELEFONO": "Teléfono",
+    "PLACEHOLDER_TELEFONO": "Ej: 3101234567",
+    "ERROR_TELEFONO_REQ": "El teléfono es obligatorio",
+    "ERROR_TELEFONO_FORMATO": "El teléfono debe tener entre 7 y 10 dígitos",
+    "LABEL_TIPO_DOCUMENTO": "Tipo de documento",
+    "SELECCIONAR_DOCUMENTO": "Selecciona un documento",
+    "ERROR_TIPO_DOCUMENTO": "Debes seleccionar un tipo de documento",
+    "LABEL_NUMERO_DOCUMENTO": "Número de documento",
+    "PLACEHOLDER_NUMERO_DOCUMENTO": "Número documento",
+    "ERROR_NUMERO_DOCUMENTO": "El número de documento es obligatorio",
+    "LABEL_DEPARTAMENTO": "Departamento",
+    "SELECCIONAR_DEPARTAMENTO": "Selecciona un departamento",
+    "ERROR_DEPARTAMENTO": "Debes seleccionar un departamento",
+    "LABEL_MUNICIPIO": "Municipio",
+    "SELECCIONAR_MUNICIPIO": "Selecciona un municipio",
+    "ERROR_MUNICIPIO": "Debes seleccionar un municipio",
+    "LABEL_ROL": "Rol",
+    "SELECCIONAR_ROL": "Selecciona un rol",
+    "ROL_COLABORADOR": "Colaborador",
+    "ROL_CONTRATANTE": "Contratante",
+    "ERROR_ROL": "Debes seleccionar un rol",
+    "LABEL_DESCRIPCION": "Descripción",
+    "PLACEHOLDER_DESCRIPCION": "Describe tu experiencia o habilidades (opcional)",
+    "LABEL_SERVICIO": "Servicio",
+    "SELECCIONAR_SERVICIO": "Selecciona un servicio",
+    "ERROR_SERVICIO": "Debes seleccionar un servicio",
+    "LABEL_CV": "Hoja de vida (PDF)",
+    "ERROR_CV": "La hoja de vida es obligatoria",
+    "BOTON_ENVIAR": "Enviar registro"
+  },
   "CU_SERVICIOS": {
     "TITULO_NO_HAY_COLABORADORES": "No hay colaboradores",
-    "TITULO_REALIZAR_BUSQUEDA":"Realiza una búsqueda para ver los colaboradores disponibles.",
-    "TITULO_NUESTROS_COLABORADORES":"Nuestros Colaboradores",
-    "TITULO_RESENAS":" Reseñas",
-    "BOTON_PERFIL":"Ver Perfil",
-    "BOTON_SEGUIR":"Seguir",
-    "TITULO_SIN_RESULTADOS":"Sin resultados",
-    "TITULO_NO_SE_ENCONTRARON":"No se encontraron colaboradores para esta búsqueda."
-
+    "TITULO_REALIZAR_BUSQUEDA": "Realiza una búsqueda para ver los colaboradores disponibles.",
+    "TITULO_NUESTROS_COLABORADORES": "Nuestros Colaboradores",
+    "TITULO_RESENAS": " Reseñas",
+    "BOTON_PERFIL": "Ver Perfil",
+    "BOTON_SEGUIR": "Seguir",
+    "TITULO_SIN_RESULTADOS": "Sin resultados",
+    "TITULO_NO_SE_ENCONTRARON": "No se encontraron colaboradores para esta búsqueda."
   }
 }

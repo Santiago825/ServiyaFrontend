@@ -1,25 +1,27 @@
-import { inject, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { CanActivate, Router, UrlTree } from '@angular/router';
 import { AuthService } from '../services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticatedGuard implements CanActivate {
-   private authService = inject(AuthService);
-    private router = inject(Router);
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-     // ✅ Validación de autenticación
-    if (this.authService.isAutenticated()) {
-      return this.router.navigate(['/inicio']);
+  canActivate(): boolean | UrlTree {
+    const isAuth = this.authService.isAutenticated();
+    const rol = this.authService.getRol();
+
+    if (!isAuth) return true;
+   
+    if (rol === 'COLABORADOR') {
+      return this.router.createUrlTree(['/inicio-colaborador']);
+    } else if (rol === 'CONTRATANTE') {
+      return this.router.createUrlTree(['/inicio']);
     } else {
-      
-      return true;
+      console.warn('⚠️ Rol desconocido, redirigiendo a login');
+      return this.router.createUrlTree(['/login']);
     }
   }
-  
 }

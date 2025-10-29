@@ -1,27 +1,32 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { ChatService } from 'src/app/services/chat/chat.service';
 
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
-  styleUrls: ['./nav.component.css']
+  styleUrls: ['./nav.component.css'],
 })
 export class NavComponent {
-menuIcon: string = 'menu';   // nombre inicial del ícono
+  menuIcon: string = 'menu'; // nombre inicial del ícono
   showMenu: boolean = false;
-  constructor(private loginService:AuthService){
-
-  }   // estado del menú
+  constructor(
+    private loginService: AuthService,
+    public chatService: ChatService,
+    private router: Router
+  ) {} // estado del menú
 
   onToggleMenu() {
-    
     // Cambiar el ícono
     this.menuIcon = this.menuIcon === 'menu' ? 'close' : 'menu';
     // Mostrar u ocultar menú
     this.showMenu = !this.showMenu;
   }
-  cerrarSesion(){
+  cerrarSesion() {
     this.loginService.logout();
-
+  }
+  abrirChat() {
+    this.router.navigate(['/chat2']);
   }
 }

@@ -2,76 +2,120 @@
   <div class="container" [class.active]="isActive">
     
     <!-- LOGIN -->
-    <div class="form-box login">
-      <form [formGroup]="loginForm" (ngSubmit)="login()">
-        <h1>Login</h1>
+ <div class="form-box login">
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
+    <h1>{{ 'CU_LOGIN.TITULO_LOGIN' | translate }}</h1>
 
-        <div class="input-box">
-          <input
-            type="text"
-            placeholder="Username"
-            formControlName="username"
-            required
-          />
-          <i class="bx bxs-user"></i>
-        </div>
-
-        <div class="input-box">
-          <input
-            type="password"
-            placeholder="Password"
-            formControlName="password"
-            required
-          />
-          <i class="bx bxs-lock-alt"></i>
-        </div>
-
-        <div class="forgot-link">
-          <a routerLink="/forgot-password">Forgot Login?</a>
-        </div>
-
-        <button type="submit" class="btn" [disabled]="loginForm.invalid">
-          Login
-        </button>
-      </form>
+    <div class="input-box">
+      <input
+        type="text"
+        placeholder="Username"
+        formControlName="username"
+        required
+      />
+      <i class="bx bxs-user"></i>
     </div>
+
+    <div class="input-box">
+      <input
+        type="password"
+        placeholder="Contraseña"
+        formControlName="password"
+        required
+      />
+      <i class="bx bxs-lock-alt"></i>
+    </div>
+
+    <div class="forgot-link">
+      <a routerLink="/forgot-password">
+        {{ 'CU_LOGIN.TITULO_OLVIDO_CONTRASENA' | translate }}
+      </a>
+    </div>
+
+    <button type="submit" class="btn">
+      {{ 'CU_LOGIN.TITULO_LOGIN' | translate }}
+    </button>
+
+    <!-- 👇 Mostrar el título solo cuando el usuario intenta enviar con campos vacíos -->
+    <div *ngIf="showValidationMessage && loginForm.invalid" class="warning-text">
+      <h3>{{ 'CU_LOGIN.TITULO_COMPLETE_LOS_CAMPOS' | translate }}</h3>
+    </div>
+  </form>
+</div>
+
 
     <!-- REGISTRO -->
-    <div class="form-box register">
-      <form>
-        <h1>Registro</h1>
-        <div class="input-box">
-          <input type="text" placeholder="Username" required />
-          <i class="bx bxs-user"></i>
-        </div>
-        <div class="input-box">
-          <input type="email" placeholder="Email" required />
-          <i class="bx bxs-envelope"></i>
-        </div>
-        <div class="input-box">
-          <input type="password" placeholder="Password" required />
-          <i class="bx bxs-lock-alt"></i>
-        </div>
-        <button type="submit" class="btn">Registro</button>
-      </form>
+ <div class="form-box register">
+  <form [formGroup]="registroForm" (ngSubmit)="registroCompleto()">
+    <h1>{{'CU_LOGIN.TITULO_REGISTRO' | translate }}</h1>
+
+    <!-- Username -->
+    <div class="input-box">
+      <input
+        type="text"
+        placeholder="Username"
+        formControlName="username"
+        [ngClass]="{ 'border-red-500': isInvalid('username') }"
+      />
+      <i class="bx bxs-user"></i>
+
+      <!-- Mensaje de error -->
+      <p *ngIf="isInvalid('username')" class="text-red-500 text-sm mt-1">
+        {{'CU_LOGIN.TITULO_NOMBRE_USUARIO_OBLIGATORIO' | translate }}
+      </p>
     </div>
+
+    <!-- Email -->
+    <div class="input-box">
+      <input
+        type="email"
+        placeholder="Email"
+        formControlName="email"
+        [ngClass]="{ 'border-red-500': isInvalid('email') }"
+      />
+      <i class="bx bxs-envelope"></i>
+
+      <p *ngIf="isInvalid('email')" class="text-red-500 text-sm mt-1">
+        {{'CU_LOGIN.TITULO_EMAIL_OBLIGATORIO' | translate }}
+      </p>
+    </div>
+
+    <!-- Password -->
+    <div class="input-box">
+      <input
+        type="password"
+        placeholder="Contraseña"
+        formControlName="password"
+        [ngClass]="{ 'border-red-500': isInvalid('password') }"
+      />
+      <i class="bx bxs-lock-alt"></i>
+
+      <p *ngIf="isInvalid('password')" class="text-red-500 text-sm mt-1">
+        {{'CU_LOGIN.TITULO_CONSTRASENA_OBLIGATORIO' | translate }}
+      </p>
+    </div>
+
+    <button type="submit" class="btn">{{'CU_LOGIN.TITULO_REGISTRO' | translate }}</button>
+  </form>
+</div>
+
 
     <!-- PANEL TOGGLE -->
     <div class="toggle-box">
       <div class="toggle-panel toggle-left">
         <!-- Logo grande en la parte azul -->
         <img src="assets/img/Logo_largo.png" alt="Logo" class="logo-principal" />
-        <h1>Hello, Welcome</h1>
-        <p>Don't have an account?</p>
-        <button class="btn register-btn" (click)="activate()">Register</button>
+        <h1>{{'CU_LOGIN.TITULO_BIENVENIDO' | translate }}</h1>
+        <p>{{'CU_LOGIN.TIUTLO_NO_TIENES_CUENTA' | translate }}</p>
+        <button class="btn register-btn" (click)="activate()">{{'CU_LOGIN.TITULO_REGISTRARSE' | translate }}</button>
       </div>
 
       <div class="toggle-panel toggle-right">
         <!-- Logo grande en la parte azul -->
         <img src="assets/img/Logo_largo.png" alt="Logo" class="logo-principal" />
-        <h1>Welcome back!</h1>
-        <p>Already have an account?</p>
-        <button class="btn register-btn" (click)="deactivate()">Login</button>
+        <h1>{{'CU_LOGIN.TITULO_BIENVENIDO_VUELTA' | translate }}</h1>
+        <p>{{'CU_LOGIN.TITULO_YA_TIENES_CUENTA' | translate }}</p>
+        <button class="btn register-btn" (click)="deactivate()">{{'CU_LOGIN.TITULO_LOGIN' | translate }}</button>
       </div>
     </div>
   </div>

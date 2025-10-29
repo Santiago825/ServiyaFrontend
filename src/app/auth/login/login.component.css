@@ -192,6 +192,12 @@ form{
     box-shadow: none;
 
 }
+.warning-text {
+  color: #ff4d4d;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
 @media screen and (max-width: 650px) {
     .container{
         height: calc(100vh - 40px);

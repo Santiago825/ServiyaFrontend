@@ -6,6 +6,8 @@ import { Observable, Subject, tap } from 'rxjs';
 import { environment } from 'src/app/environment/environment';
 import Swal from 'sweetalert2';
 import * as SokJS from 'sockjs-client';
+import { registro } from 'src/app/models/registro';
+import { ChatService } from '../chat/chat.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +19,7 @@ export class AuthService {
   private subscriptionActiveUsers: any;
   private activeUsersSubject = new Subject<any>();
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router,private chatService:ChatService) {
     this.startTokenCheck();
   }
   login(username: string, password: string): Observable<any> {
@@ -28,9 +30,21 @@ export class AuthService {
           if (response.token) {
             this.setToken(response.token);
             this.saveUser(response);
+            this.saveRol(response.rol);
           }
         })
       );
+  }
+  registro(registro: registro): Observable<any> {
+    return this.http.post<any>(
+      environment.urlApi + 'registro',
+      registro
+    );
+  }
+  validarUsername(username: string): Observable<any> {
+    return this.http.get<any>(
+      environment.urlApi + 'validar-username?username=' + username
+    );
   }
   private setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
@@ -66,16 +80,27 @@ export class AuthService {
   }
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem('user')
+    localStorage.removeItem('user')
+    this.chatService.disconnect();
+
     this.router.navigate(['login']);
   }
   saveUser(user: any) {
-    localStorage.setItem(
+     localStorage.setItem(
       'user',
       JSON.stringify({
         username: user.username,
-        avatarUrl: user.avatarUrl,
+        idUsuario: user.idUsuario
       })
-    );
+      );
+  }
+  saveRol(rol: string) {
+    localStorage.setItem('rol', rol);
+  }
+
+  getRol(): string | null {
+    return localStorage.getItem('rol');
   }
   getUser(): any {
     return JSON.parse(localStorage.getItem('user') ?? '{}');
@@ -98,21 +123,14 @@ export class AuthService {
       '/topic/active',
       (message: any) => {
         const user = JSON.parse(message.body);
-        console.log(user);
-
         this.activeUsersSubject.next(user);
       }
     );
   }
-  sendConnect(user:any){
-    this.stompClient.send(
-      'app/user/connect',
-      {},
-      JSON.stringify(user)
-
-    )
+  sendConnect(user: any) {
+    this.stompClient.send('app/user/connect', {}, JSON.stringify(user));
   }
-  subscribeActiveUsers():Observable<any>{
+  subscribeActiveUsers(): Observable<any> {
     return this.activeUsersSubject.asObservable();
   }
   startTokenCheck() {

@@ -8,6 +8,7 @@ import {
   group,
 } from '@angular/animations';
 import { RouterOutlet } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -48,6 +49,11 @@ import { RouterOutlet } from '@angular/router';
   ],
 })
 export class AppComponent {
+  constructor(public translate: TranslateService) {
+    this.translate.addLangs(['es', 'en']);
+    this.translate.setDefaultLang('es'); // idioma por defecto
+    this.translate.use('es');
+  }
   title = 'ServiYa';
 
   prepareRoute(outlet: RouterOutlet) {

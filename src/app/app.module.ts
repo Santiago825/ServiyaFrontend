@@ -25,12 +25,33 @@ import { ContratoComponent } from './components/contrato/contrato.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthInterceptor } from './guards/auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { PrimengModule } from './primeng/primeng.module';
-import { MessageComponent } from './components/message/message.component';
+import { Chat2Component } from './components/chat2/chat2.component';
+import { ResgistroCompletoComponent } from './components/resgistro-completo/resgistro-completo/resgistro-completo.component';
+import { NavColaboradorComponent } from './components/shared/nav-colaborador/nav-colaborador.component';
+import { InicioColaboradorComponent } from './components/colaborador/inicio-colaborador/inicio-colaborador.component';
+import { ContratoColaboradorComponent } from './components/colaborador/contrato-colaborador/contrato-colaborador.component';
+import { ResenaColaboradorComponent } from './components/colaborador/resena-colaborador/resena-colaborador.component';
+import { ChatColaboradorComponent } from './components/colaborador/chat-colaborador/chat-colaborador.component';
+import { NgxUiLoaderModule, NgxUiLoaderConfig, SPINNER, POSITION, PB_DIRECTION } from 'ngx-ui-loader';
+
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
+
+const ngxUiLoaderConfig: NgxUiLoaderConfig = {
+  fgsType: SPINNER.ballSpinClockwise, // tipo de spinner
+  fgsColor: '#7494ec',                // 🎨 color principal del spinner
+  fgsSize: 100,                       // tamaño del spinner
+  bgsColor: '#000000',                // color del fondo (backdrop)
+  bgsOpacity: 0.5,                    // opacidad del fondo
+  pbColor: '#7494ec',                 // color de la barra de progreso
+  pbDirection: PB_DIRECTION.leftToRight,
+  pbThickness: 4,
+  text: 'Cargando...',                // texto opcional
+  textColor: '#FFFFFF',               // color del texto
+  textPosition: POSITION.centerCenter // posición del texto
+};
 
 @NgModule({
   declarations: [
@@ -43,10 +64,15 @@ export function HttpLoaderFactory(http: HttpClient) {
     ChatComponent,
     ComoFuncionaComponent,
     ContratoComponent,
-    MessageComponent
+    Chat2Component,
+    ResgistroCompletoComponent,
+    NavColaboradorComponent,
+    InicioColaboradorComponent,
+    ContratoColaboradorComponent,
+    ResenaColaboradorComponent,
+    ChatColaboradorComponent
     ],
   imports: [
-    PrimengModule,
     BrowserModule,
     AppRoutingModule,
     FormsModule,
@@ -62,6 +88,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient],
       },
     }),
+        NgxUiLoaderModule.forRoot(ngxUiLoaderConfig)
+
+    
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

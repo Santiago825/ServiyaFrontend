@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-
-import { ColaboradoresService } from 'src/app/services/colaboradores.service';
-import { colaborador } from 'src/app/models/colaborador';
-import { Servicio } from 'src/app/models/servicio';
-import { detalleColaborador } from 'src/app/models/detalleColaborador';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { ServiciosService } from 'src/app/services/servicios/servicios.service';
 import { GeneralService } from 'src/app/services/general/general.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { CONSTANTES } from 'src/app/constants/constants';
+import { Servicio } from 'src/app/models/servicio';
+import { colaborador } from 'src/app/models/colaborador';
+import { RequestSeguidor } from 'src/app/models/requestSeguidor';
 
 @Component({
   selector: 'app-servicios',
@@ -21,9 +20,8 @@ export class ServiciosComponent implements OnInit {
   departamentos: any[] = [];
   municipios: any[] = [];
   colaboradores: colaborador[] = [];
-  detalleColaborador: detalleColaborador[] = [];
-  formBusqueda!: FormGroup;
 
+  formBusqueda!: FormGroup;
   hasSearched = false;
   showCollaborators = false;
 
@@ -33,13 +31,13 @@ export class ServiciosComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private translate: TranslateService,
-    private colaboradoresService: ColaboradoresService,
+    private loader: NgxUiLoaderService,
     private servicioService: ServiciosService,
-    private generalService: GeneralService
+    private generalService: GeneralService,
+    private authService: AuthService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.formBusqueda = this.fb.group({
       servicio: [null],
       departamento: [null],
@@ -50,98 +48,82 @@ export class ServiciosComponent implements OnInit {
     this.cargarDepartamentos();
   }
 
-  /** Cargar lista de servicios */
-  obtenerServicios(): void {
+  /** 🔹 Obtener servicios */
+  private obtenerServicios(): void {
     this.servicioService.obtenerServicios().subscribe({
       next: (resp) => {
-        if (
-          resp[CONSTANTES.CODIGO_RESPUESTA] &&
-          resp[CONSTANTES.CODIGO_RESPUESTA] === CONSTANTES.OK
-        ) {
-          this.servicios = resp['lista'];
+        if (resp[CONSTANTES.CODIGO_RESPUESTA] === CONSTANTES.OK) {
+          this.servicios = resp['lista'] || [];
         }
       },
       error: (err) => console.error('Error cargando servicios:', err),
     });
   }
 
-  /** Cargar departamentos */
-  cargarDepartamentos(): void {
+  /** 🔹 Cargar departamentos */
+  private cargarDepartamentos(): void {
     this.generalService.obtenerDepartamento().subscribe({
       next: (resp) => {
-        if (
-          resp[CONSTANTES.CODIGO_RESPUESTA] &&
-          resp[CONSTANTES.CODIGO_RESPUESTA] === CONSTANTES.OK
-        ) {
-          this.departamentos = resp['lista'];
+        if (resp[CONSTANTES.CODIGO_RESPUESTA] === CONSTANTES.OK) {
+          this.departamentos = resp['lista'] || [];
         }
       },
       error: (err) => console.error('Error cargando departamentos:', err),
     });
   }
 
-  /** Cargar municipios cuando cambia el departamento */
+  /** 🔹 Cargar municipios al cambiar departamento */
   onDepartamentoChange(): void {
     const idDepartamento = this.formBusqueda.get('departamento')?.value;
     if (!idDepartamento) return;
 
     this.generalService.obtenerMunicipio(idDepartamento).subscribe({
       next: (resp) => {
-        if (
-          resp[CONSTANTES.CODIGO_RESPUESTA] &&
-          resp[CONSTANTES.CODIGO_RESPUESTA] === CONSTANTES.OK
-        ) {
-          this.municipios = resp['lista'];
+        if (resp[CONSTANTES.CODIGO_RESPUESTA] === CONSTANTES.OK) {
+          this.municipios = resp['lista'] || [];
         }
       },
       error: (err) => console.error('Error cargando municipios:', err),
     });
   }
 
-  /** Buscar colaboradores según servicio y municipio */
+  /** 🔹 Buscar colaboradores */
   obtenerColaboradores(): void {
-    this.colaboradores = [];
     const { servicio, municipio } = this.formBusqueda.value;
-
     if (!servicio || !municipio) {
-      alert('Por favor selecciona un servicio y un municipio.');
+      this.generalService.alertaMensajeInformacion(
+        'Por favor selecciona un servicio y un municipio.'
+      );
       return;
     }
 
+    this.loader.start();
     this.servicioService.obtenerColaboradors(servicio, municipio).subscribe({
       next: (resp) => {
-        if (
-          resp[CONSTANTES.CODIGO_RESPUESTA] &&
-          resp[CONSTANTES.CODIGO_RESPUESTA] === CONSTANTES.OK
-        ) {
-          this.hasSearched = true;
-          if (resp['lista'] != null) {
-            this.showCollaborators = resp['lista'].length > 0;
-            this.colaboradores = resp['lista'];
-          } else {
-            this.hasSearched = true;
-            this.showCollaborators = false;
-          }
+        this.hasSearched = true;
+        if (resp[CONSTANTES.CODIGO_RESPUESTA] === CONSTANTES.OK) {
+          this.colaboradores = resp['lista'] || [];
+          this.showCollaborators = this.colaboradores.length > 0;
+        } else {
+          this.showCollaborators = false;
         }
       },
       error: (err) => {
         console.error('Error cargando colaboradores:', err);
-        this.hasSearched = true;
         this.showCollaborators = false;
       },
+      complete: () => this.loader.stop(),
     });
   }
 
-  /** Modal: abrir perfil colaborador */
+  /** 🔹 Abrir modal */
   openModal(colaborador: any): void {
     this.obtenerDetalleColaborador(colaborador.id_persona);
     this.showModal = true;
-
-    // Delay para activar la animación
     setTimeout(() => (this.animateModal = true), 10);
   }
 
-  /** Modal: cerrar perfil */
+  /** 🔹 Cerrar modal */
   closeModal(): void {
     this.animateModal = false;
     setTimeout(() => {
@@ -149,15 +131,18 @@ export class ServiciosComponent implements OnInit {
       this.selectedColaborador = null;
     }, 300);
   }
-  obtenerDetalleColaborador(idColaborador: number) {
+
+  /** 🔹 Obtener detalle del colaborador */
+  private obtenerDetalleColaborador(idColaborador: number): void {
+    this.loader.start();
     this.servicioService.obtenerDetalleColaborador(idColaborador).subscribe({
       next: (resp) => {
-        if (
-          resp[CONSTANTES.CODIGO_RESPUESTA] &&
-          resp[CONSTANTES.CODIGO_RESPUESTA] === CONSTANTES.OK
-        ) {
-          const lista = resp['lista'][0];
+        if (resp[CONSTANTES.CODIGO_RESPUESTA] === CONSTANTES.OK) {
+          const lista = resp['lista']?.[0];
+          if (!lista) return;
+
           this.selectedColaborador = {
+            id_persona: lista.id_persona,
             foto: this.getImageSrc(lista.foto),
             nombre: `${lista.nombre} ${lista.apellido}`,
             telefono: lista.telefono,
@@ -166,35 +151,80 @@ export class ServiciosComponent implements OnInit {
             correo: lista.username,
             categoria: lista.servicio,
             resenas: lista.numero_resenas,
+            seguido: lista.seguido,
             comentarios:
               lista.resena?.map((r: any) => ({
-                usuario: `${r.nombre}`,
+                usuario: r.nombre,
                 texto: r.comentario,
                 estrellas: r.puntuacion,
               })) || [],
           };
         }
       },
-      error: (error) => {
-        console.error(error);
-      },
+      error: (error) => console.error('Error obteniendo detalle:', error),
+      complete: () => this.loader.stop(),
     });
   }
 
-  /** Acciones */
-  seguirColaborador(c: any): void {
-    console.log('Siguiendo a:', c.nombre);
-    alert('Ahora sigues a ' + c.nombre);
+  /** 🔹 Seguir / dejar de seguir colaborador */
+  toggleSeguirColaborador(c: any): void {
+    const { idUsuario } = this.authService.getUser();
+    const request: RequestSeguidor = {
+      contratante: idUsuario,
+      colaborador: c.id_persona,
+    };
+
+    const accion = c.seguido === 1 ? 'dejarSeguirColaborador' : 'seguirColaborador';
+
+    this.servicioService[accion](request).subscribe({
+      next: (resp) => {
+        this.generalService.alertaMensajeInformacion(
+          resp[CONSTANTES.MENSAJE_RESPUESTA]
+        );
+        c.seguido = c.seguido === 1 ? 0 : 1;
+
+        // Actualizar lista principal y modal si aplica
+        this.colaboradores = this.colaboradores.map(col =>
+          col.id_persona === c.id_persona ? { ...col, seguido: c.seguido } : col
+        );
+
+        if (this.selectedColaborador?.id_persona === c.id_persona) {
+          this.selectedColaborador.seguido = c.seguido;
+        }
+      },
+      error: (error) => console.error('Error al seguir/dejar de seguir:', error),
+    });
   }
 
-  contactarColaborador(c: any): void {
-    console.log('Contactando a:', c.nombre);
-    alert('Has enviado una solicitud de contacto a ' + c.nombre);
+  /** 🔹 Convertir base64 a imagen */
+   getImageSrc(base64: string | null): string {
+    return base64
+      ? `data:image/jpeg;base64,${base64}`
+      : 'assets/img/default-avatar.png';
   }
-  getImageSrc(base64String: string | null): string {
-    if (!base64String) {
-      return 'assets/img/default-avatar.png'; // Imagen por defecto
-    }
-    return `data:image/jpeg;base64,${base64String}`;
+
+  /** 🔹 Descargar CV */
+  obtenerCvColaborador(c: any): void {
+    this.loader.start();
+    this.servicioService.obtenerCv(c.id_persona).subscribe({
+      next: (resp) => {
+        const cv = resp['lista']?.[0];
+        if (!cv?.contenidoBase64) return;
+
+        const byteArray = Uint8Array.from(atob(cv.contenidoBase64), (char) =>
+          char.charCodeAt(0)
+        );
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${cv.nombre}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: (error) => console.error('Error al descargar CV:', error),
+      complete: () => this.loader.stop(),
+    });
   }
 }

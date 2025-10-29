@@ -5,37 +5,55 @@
     Contratos Registrados
   </h2>
 
-  <div class="overflow-x-auto">
-    <table
-      class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm"
-    >
-      <thead class="bg-[#7494ec] text-white">
-        <tr>
-          <th class="px-4 py-2 text-left">Título del Proyecto</th>
-          <th class="px-4 py-2 text-left">Colaborador</th>
-          <th class="px-4 py-2 text-left">Dirección</th>
-          <th class="px-4 py-2 text-left">Precio (COP)</th>
-          <th class="px-4 py-2 text-center">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let c of contracts" class="border-b hover:bg-gray-50">
-          <td class="px-4 py-2">{{ c.projectTitle }}</td>
-          <td class="px-4 py-2">{{ c.collaborator }}</td>
-          <td class="px-4 py-2">{{ c.address }}</td>
-          <td class="px-4 py-2">{{ c.price | number }}</td>
-          <td class="px-4 py-2 text-center">
-            <button
-              (click)="openContractModal(c)"
-              class="text-[#7494ec] hover:text-blue-700"
-            >
-              <i class="fas fa-eye"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Si hay contratos, muestra la tabla -->
+  <div *ngIf="contratos.length > 0; else noContratos">
+    <div class="overflow-x-auto">
+      <table
+        class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm"
+      >
+        <thead class="bg-[#7494ec] text-white">
+          <tr>
+            <th class="px-4 py-2 text-left">Título del contrato</th>
+            <th class="px-4 py-2 text-left">Colaborador</th>
+            <th class="px-4 py-2 text-left">Dirección</th>
+            <th class="px-4 py-2 text-left">Precio (COP)</th>
+            <th class="px-4 py-2 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of contratos" class="border-b hover:bg-gray-50">
+            <td class="px-4 py-2">{{ c.nombreContrato }}</td>
+            <td class="px-4 py-2">{{ c.nombreColaborador }}</td>
+            <td class="px-4 py-2">{{ c.direccion }}</td>
+            <td class="px-4 py-2">
+              {{ c.precio | currency : "COP" : "symbol" }}
+            </td>
+            <td class="px-4 py-2 text-center">
+              <button
+                (click)="openContractModal(c)"
+                class="text-[#7494ec] hover:text-blue-700"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+
+  <!-- Si NO hay contratos -->
+  <ng-template #noContratos>
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+      <i class="fas fa-folder-open text-[#7494ec] text-6xl mb-4"></i>
+      <h3 class="text-xl font-semibold text-gray-700 mb-2">
+        No tienes contratos registrados
+      </h3>
+      <p class="text-gray-500">
+        Aún no hay ningún colaborador asociado a tus contratos.
+      </p>
+    </div>
+  </ng-template>
 </div>
 
 <!-- Modal -->
@@ -43,19 +61,13 @@
   *ngIf="showContractModal"
   class="fixed inset-0 z-50 flex items-center justify-center p-4"
 >
-  <!-- Fondo semitransparente -->
-  <div 
-    class="modal-backdrop"
-    (click)="closeContractModal()"
-  ></div>
+  <div class="modal-backdrop" (click)="closeContractModal()"></div>
 
-  <!-- Contenido del modal -->
   <div
     @fadeZoom
     class="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-2 md:mx-0 p-6 md:p-8 z-10 overflow-y-auto"
     style="max-height: 90vh"
   >
-    <!-- Botón cerrar -->
     <button
       (click)="closeContractModal()"
       class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold"
@@ -63,33 +75,55 @@
       &times;
     </button>
 
-    <!-- Título -->
     <h2 class="text-xl md:text-4xl font-bold text-[#7494ec] mb-6 text-center">
-      {{ selectedContract?.projectTitle }}
+      {{ selectedContract?.nombreContrato }}
     </h2>
 
-    <!-- Información del contrato -->
-    <div class="space-y-4 md:space-y-6 text-base md:text-lg">
-      <p><strong>Colaborador:</strong> {{ selectedContract?.collaborator }}</p>
-      <p><strong>Dirección:</strong> {{ selectedContract?.address }}</p>
-      <p><strong>Fecha Inicio:</strong> {{ selectedContract?.startDate }}</p>
-      <p><strong>Fecha Fin:</strong> {{ selectedContract?.endDate }}</p>
-      <p>
-        <strong>Precio:</strong>
-        {{ selectedContract?.price | currency : "COP" : "symbol" }}
-      </p>
-      <p><strong>Descripción:</strong> {{ selectedContract?.description }}</p>
-      <p>
-        <strong>Documentos Adjuntos:</strong>
-        {{ selectedContract?.attachments }}
-      </p>
+    <!-- CONTENEDOR RESPONSIVE -->
+    <div
+      class="flex flex-col md:flex-row justify-between items-center md:items-start gap-6 mb-6"
+    >
+      <!-- FOTO centrada en móviles -->
+      <div
+        class="flex justify-center md:justify-end w-full md:w-auto order-1 md:order-2"
+      >
+        <img
+          *ngIf="base64ToImage(selectedContract?.foto) as foto"
+          [src]="foto"
+          alt="Foto del colaborador"
+          class="w-32 h-32 md:w-28 md:h-28 rounded-full object-cover border-4 border-[#7494ec] shadow-lg"
+        />
+      </div>
+
+      <!-- INFORMACIÓN -->
+      <div
+        class="flex-1 space-y-3 md:space-y-4 text-base md:text-lg order-2 md:order-1"
+      >
+        <p>
+          <strong>Colaborador:</strong>
+          {{ selectedContract?.nombreColaborador }}
+        </p>
+        <p><strong>Dirección:</strong> {{ selectedContract?.direccion }}</p>
+        <p>
+          <strong>Fecha Inicio:</strong> {{ selectedContract?.fechaInicio }}
+        </p>
+        <p><strong>Fecha Fin:</strong> {{ selectedContract?.fechaFin }}</p>
+        <p>
+          <strong>Precio:</strong>
+          {{ selectedContract?.precio | currency : "COP" : "symbol" }}
+        </p>
+        <p><strong>Descripción:</strong> {{ selectedContract?.descripcion }}</p>
+        <p>
+          <strong>Archivo Contrato:</strong> {{ selectedContract?.contrato }}
+        </p>
+      </div>
     </div>
 
-    <!-- Botón descargar -->
+    <!-- BOTÓN DESCARGAR -->
     <div class="mt-6 md:mt-8 text-center">
       <button
         class="bg-[#7494ec] text-white px-6 md:px-8 py-2 md:py-3 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
-        (click)="downloadContract()"
+        (click)="downloadContract(selectedContract.id_contrato)"
       >
         <i class="fas fa-download"></i> Descargar Contrato
       </button>
@@ -98,4 +132,3 @@
 </div>
 
 <app-footer></app-footer>
-

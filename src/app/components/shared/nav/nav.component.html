@@ -43,7 +43,6 @@
             <i class="fas fa-file-contract"></i> Contrato
           </a>
         </li>
-
         <li>
           <a
             class="flex items-center gap-2 font-bold hover:text-[#7494ec]"
@@ -58,6 +57,17 @@
         <li>
           <a
             class="flex items-center gap-2 font-bold hover:text-[#7494ec]"
+            (click)="abrirChat()"
+            routerLinkActive="text-[#7494ec]"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fas fa-comments"></i> Chat2
+          </a>
+        </li>
+
+        <li>
+          <a
+            class="flex items-center gap-2 font-bold hover:text-[#7494ec]"
             routerLink="/como-funciona"
             routerLinkActive="text-[#7494ec]"
             [routerLinkActiveOptions]="{ exact: true }"
@@ -65,11 +75,15 @@
             <i class="fas fa-info-circle"></i> Como funciona
           </a>
         </li>
-       
       </ul>
     </div>
     <div class="flex items-center gap-6">
-    <button class="bg-[#87acec] text-white px-5 py-2 rounded-full " (click)="cerrarSesion()">Cerrar sesion</button>
+      <button
+        class="bg-[#87acec] text-white px-5 py-2 rounded-full"
+        (click)="cerrarSesion()"
+      >
+        Cerrar sesion
+      </button>
       <ion-icon
         (click)="onToggleMenu()"
         [name]="menuIcon"

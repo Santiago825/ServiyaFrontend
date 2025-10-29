@@ -6,4 +6,5 @@ export interface colaborador {
   servicio: string;
   numero_resenas: number;
   foto:string;
+  seguido:number;
 }

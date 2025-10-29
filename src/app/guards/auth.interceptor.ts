@@ -4,73 +4,68 @@ import {
   HttpHandler,
   HttpInterceptor,
   HttpRequest,
-  HttpErrorResponse
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth/auth.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  constructor(private router: Router, private loader: NgxUiLoaderService) {}
 
-  constructor(private authService: AuthService, private router: Router) {}
-
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // 🔑 Obtener el token del AuthService
-    const token = this.authService.getToken();
-
-    // 🛠️ Si hay token, clonar la petición agregando el header Authorization
-    let authReq = req;
-    if (token) {
-      authReq = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-    }
-
-    // 🚀 Continuar con la petición y manejar errores
-    return next.handle(authReq).pipe(
+  intercept(
+    request: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    return next.handle(request).pipe(
       map((event: HttpEvent<any>) => {
         return event;
       }),
-      catchError((error: HttpErrorResponse) => {
+      catchError((error: HttpErrorResponse, caught) => {
         let errorMessage = '';
 
-        if (error.status === 401) {
-          // ⚠️ Token inválido o no autorizado
-          errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
-          Swal.fire({
-            icon: 'warning',
-            title: 'Sesión expirada',
-            text: errorMessage,
-            confirmButtonText: 'Aceptar'
-          }).then(() => {
-            this.authService.logout();
-          });
-        } else if (error.status === 403) {
-          errorMessage = 'No tienes permisos para acceder a este recurso.';
-          Swal.fire({
-            icon: 'error',
-            title: 'Acceso denegado',
-            text: errorMessage,
-            confirmButtonText: 'Aceptar'
-          });
-        } else {
-          // Otros errores genéricos
-          errorMessage = 'Ocurrió un error. Intenta nuevamente.';
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: errorMessage,
-            confirmButtonText: 'Aceptar'
-          });
-        }
+        this.mensajeDeSalida(error, errorMessage);
 
-        return throwError(() => new Error(errorMessage));
+        return throwError(errorMessage);
       })
     );
+  }
+
+  mensajeDeSalida(error: HttpErrorResponse, errorMessage: string): void {
+    if (error && error.error) {
+      errorMessage = `${error.error.mensajeRespuesta}`;
+
+      if (error.status == 401) {
+        errorMessage =
+          'Su sesión ha caducado. Por favor ingrese nuevamente. (MSJ-U2)';
+        this.router.navigateByUrl('/h/login');
+      }
+
+      if (
+        errorMessage === null ||
+        errorMessage === 'null' ||
+        errorMessage === undefined ||
+        errorMessage === 'undefined' ||
+        errorMessage === ''
+      ) {
+        errorMessage =
+          'Ha ocurrido un inconveniente por favor intente nuevamente. (MSJ-U1)';
+      }
+
+      Swal.fire({
+        title: 'Información',
+        showClass: {
+          popup: 'animate__animated animate__fadeInDown',
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutUp',
+        },
+        text: errorMessage,
+      });
+      this.loader.stop();
+    }
   }
 }

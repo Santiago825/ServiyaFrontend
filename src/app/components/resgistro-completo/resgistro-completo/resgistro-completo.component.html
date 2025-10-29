@@ -1,0 +1,318 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100 py-16">
+  <div
+    class="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8 border-t-4 transition-transform hover:scale-[1.01]"
+    style="border-color: #7494ec"
+  >
+    <h2 class="text-3xl font-bold text-center mb-6" style="color: #7494ec">
+      {{ 'CU_REGISTRO.TITULO_REGISTRO' | translate }}
+    </h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+      <!-- Foto -->
+      <div class="flex flex-col items-center mb-6 relative">
+        <div
+          class="relative w-32 h-32 rounded-full overflow-hidden shadow-md border-4"
+          style="border-color: #7494ec"
+        >
+          <img
+            *ngIf="fotoPreview; else uploadPlaceholder"
+            [src]="fotoPreview"
+            [alt]="'CU_REGISTRO.ALT_FOTO' | translate"
+            class="object-cover w-full h-full rounded-full"
+          />
+
+          <ng-template #uploadPlaceholder>
+            <label
+              for="fotoInput"
+              class="flex flex-col items-center justify-center w-full h-full rounded-full border-dashed cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all"
+              style="border-color: #7494ec"
+            >
+              <span class="text-gray-500 text-sm text-center">
+                {{ 'CU_REGISTRO.SUBIR_FOTO' | translate }}
+              </span>
+            </label>
+            <input
+              id="fotoInput"
+              type="file"
+              (change)="onFileChange($event)"
+              accept="image/*"
+              class="hidden"
+            />
+          </ng-template>
+        </div>
+
+        <button
+          *ngIf="fotoPreview"
+          type="button"
+          (click)="removeFoto()"
+          class="absolute top-0 right-[calc(50%-4rem)] translate-x-14 -translate-y-2 flex items-center justify-center w-8 h-8 rounded-full bg-[#7494ec] text-white text-lg font-bold shadow-md hover:bg-[#5d7de0] transition-all duration-200 border-2 border-white"
+          [title]="'CU_REGISTRO.ELIMINAR_FOTO' | translate"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Nombre y Apellido -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">
+            {{ 'CU_REGISTRO.LABEL_NOMBRE' | translate }}
+          </label>
+          <input
+            formControlName="nombre"
+            type="text"
+            [placeholder]="'CU_REGISTRO.PLACEHOLDER_NOMBRE' | translate"
+            class="w-full border rounded-lg p-2.5 focus:outline-none focus:ring-2"
+            style="border-color: #7494ec"
+          />
+          <p
+            *ngIf="form.get('nombre')?.invalid && (form.get('nombre')?.touched || submitted)"
+            class="text-red-500 text-sm mt-1"
+          >
+            {{ 'CU_REGISTRO.ERROR_NOMBRE' | translate }}
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">
+            {{ 'CU_REGISTRO.LABEL_APELLIDO' | translate }}
+          </label>
+          <input
+            formControlName="apellido"
+            type="text"
+            [placeholder]="'CU_REGISTRO.PLACEHOLDER_APELLIDO' | translate"
+            class="w-full border rounded-lg p-2.5 focus:outline-none focus:ring-2"
+            style="border-color: #7494ec"
+          />
+          <p
+            *ngIf="form.get('apellido')?.invalid && (form.get('apellido')?.touched || submitted)"
+            class="text-red-500 text-sm mt-1"
+          >
+            {{ 'CU_REGISTRO.ERROR_APELLIDO' | translate }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Teléfono -->
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">
+          {{ 'CU_REGISTRO.LABEL_TELEFONO' | translate }}
+        </label>
+        <input
+          formControlName="telefono"
+          type="number"
+          [placeholder]="'CU_REGISTRO.PLACEHOLDER_TELEFONO' | translate"
+          class="w-full border rounded-lg p-2.5 focus:outline-none focus:ring-2"
+          style="border-color: #7494ec"
+        />
+        <p
+          *ngIf="form.get('telefono')?.hasError('required') && (form.get('telefono')?.touched || submitted)"
+          class="text-red-500 text-sm mt-1"
+        >
+          {{ 'CU_REGISTRO.ERROR_TELEFONO_REQ' | translate }}
+        </p>
+        <p
+          *ngIf="form.get('telefono')?.hasError('pattern') && (form.get('telefono')?.touched || submitted)"
+          class="text-red-500 text-sm mt-1"
+        >
+          {{ 'CU_REGISTRO.ERROR_TELEFONO_FORMATO' | translate }}
+        </p>
+      </div>
+
+      <!-- Tipo documento -->
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">
+          {{ 'CU_REGISTRO.LABEL_TIPO_DOCUMENTO' | translate }}
+        </label>
+        <select
+          formControlName="tipoDocumento"
+          class="w-full border rounded-lg p-2.5 focus:outline-none focus:ring-2"
+          style="border-color: #7494ec"
+        >
+          <option value="" disabled selected>
+            {{ 'CU_REGISTRO.SELECCIONAR_DOCUMENTO' | translate }}
+          </option>
+          <option *ngFor="let dep of tipoDocumento" [value]="dep.idDocumento">
+            {{ dep.nombre }}
+          </option>
+        </select>
+        <p
+          *ngIf="form.get('tipoDocumento')?.invalid && (form.get('tipoDocumento')?.touched || submitted)"
+          class="text-red-500 text-sm mt-1"
+        >
+          {{ 'CU_REGISTRO.ERROR_TIPO_DOCUMENTO' | translate }}
+        </p>
+      </div>
+
+      <!-- Número documento -->
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">
+          {{ 'CU_REGISTRO.LABEL_NUMERO_DOCUMENTO' | translate }}
+        </label>
+        <input
+          formControlName="numeroDocumento"
+          type="number"
+          [placeholder]="'CU_REGISTRO.PLACEHOLDER_NUMERO_DOCUMENTO' | translate"
+          class="w-full border rounded-lg p-2.5 focus:outline-none focus:ring-2"
+          style="border-color: #7494ec"
+        />
+        <p
+          *ngIf="form.get('numeroDocumento')?.invalid && (form.get('numeroDocumento')?.touched || submitted)"
+          class="text-red-500 text-sm mt-1"
+        >
+          {{ 'CU_REGISTRO.ERROR_NUMERO_DOCUMENTO' | translate }}
+        </p>
+      </div>
+
+      <!-- Departamento -->
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">
+          {{ 'CU_REGISTRO.LABEL_DEPARTAMENTO' | translate }}
+        </label>
+        <select
+          formControlName="departamento"
+          (change)="onDepartamentoChange()"
+          class="w-full border rounded-lg p-2.5 focus:outline-none focus:ring-2"
+          style="border-color: #7494ec"
+        >
+          <option value="" disabled selected>
+            {{ 'CU_REGISTRO.SELECCIONAR_DEPARTAMENTO' | translate }}
+          </option>
+          <option *ngFor="let dep of departamentos" [value]="dep.idDepartamento">
+            {{ dep.nombre }}
+          </option>
+        </select>
+        <p
+          *ngIf="form.get('departamento')?.invalid && (form.get('departamento')?.touched || submitted)"
+          class="text-red-500 text-sm mt-1"
+        >
+          {{ 'CU_REGISTRO.ERROR_DEPARTAMENTO' | translate }}
+        </p>
+      </div>
+
+      <!-- Municipio -->
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">
+          {{ 'CU_REGISTRO.LABEL_MUNICIPIO' | translate }}
+        </label>
+        <select
+          formControlName="municipio"
+          class="w-full border rounded-lg p-2.5 focus:outline-none focus:ring-2"
+          style="border-color: #7494ec"
+          [disabled]="!municipios.length"
+        >
+          <option value="" disabled selected>
+            {{ 'CU_REGISTRO.SELECCIONAR_MUNICIPIO' | translate }}
+          </option>
+          <option *ngFor="let muni of municipios" [value]="muni.idMunicipio">
+            {{ muni.nombre }}
+          </option>
+        </select>
+        <p
+          *ngIf="form.get('municipio')?.invalid && (form.get('municipio')?.touched || submitted)"
+          class="text-red-500 text-sm mt-1"
+        >
+          {{ 'CU_REGISTRO.ERROR_MUNICIPIO' | translate }}
+        </p>
+      </div>
+
+      <!-- Rol -->
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">
+          {{ 'CU_REGISTRO.LABEL_ROL' | translate }}
+        </label>
+        <select
+          formControlName="rol"
+          class="w-full border rounded-lg p-2.5 focus:outline-none focus:ring-2"
+          style="border-color: #7494ec"
+        >
+          <option value="" disabled selected>
+            {{ 'CU_REGISTRO.SELECCIONAR_ROL' | translate }}
+          </option>
+          <option value="Colaborador">
+            {{ 'CU_REGISTRO.ROL_COLABORADOR' | translate }}
+          </option>
+          <option value="Contratante">
+            {{ 'CU_REGISTRO.ROL_CONTRATANTE' | translate }}
+          </option>
+        </select>
+        <p
+          *ngIf="form.get('rol')?.invalid && (form.get('rol')?.touched || submitted)"
+          class="text-red-500 text-sm mt-1"
+        >
+          {{ 'CU_REGISTRO.ERROR_ROL' | translate }}
+        </p>
+      </div>
+
+      <!-- Campos dinámicos para Colaborador -->
+      <div
+        *ngIf="form.get('rol')?.value === 'Colaborador'"
+        class="space-y-4 animate-fadeIn"
+      >
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">
+            {{ 'CU_REGISTRO.LABEL_DESCRIPCION' | translate }}
+          </label>
+          <textarea
+            formControlName="descripcion"
+            [placeholder]="'CU_REGISTRO.PLACEHOLDER_DESCRIPCION' | translate"
+            class="w-full border rounded-lg p-2.5 focus:outline-none focus:ring-2 resize-none"
+            style="border-color: #7494ec"
+          ></textarea>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">
+            {{ 'CU_REGISTRO.LABEL_SERVICIO' | translate }}
+          </label>
+          <select
+            formControlName="servicio"
+            class="w-full border rounded-lg p-2.5 focus:outline-none focus:ring-2"
+            style="border-color: #7494ec"
+          >
+            <option value="" disabled selected>
+              {{ 'CU_REGISTRO.SELECCIONAR_SERVICIO' | translate }}
+            </option>
+            <option *ngFor="let servicio of servicios" [value]="servicio.idServicio">
+              {{ servicio.nombre }}
+            </option>
+          </select>
+          <p
+            *ngIf="form.get('servicio')?.invalid && (form.get('servicio')?.touched || submitted)"
+            class="text-red-500 text-sm mt-1"
+          >
+            {{ 'CU_REGISTRO.ERROR_SERVICIO' | translate }}
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">
+            {{ 'CU_REGISTRO.LABEL_CV' | translate }}
+          </label>
+          <input
+            type="file"
+            (change)="onFileCvChange($event)"
+            accept=".pdf"
+            class="w-full border rounded-lg p-2.5 focus:outline-none cursor-pointer"
+            style="border-color: #7494ec"
+          />
+          <p
+            *ngIf="form.get('cv')?.invalid && (form.get('cv')?.touched || submitted)"
+            class="text-red-500 text-sm mt-1"
+          >
+            {{ 'CU_REGISTRO.ERROR_CV' | translate }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Botón -->
+      <button
+        type="submit"
+        class="w-full text-white font-semibold py-3 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg"
+        style="background-color: #7494ec"
+      >
+        {{ 'CU_REGISTRO.BOTON_ENVIAR' | translate }}
+      </button>
+    </form>
+  </div>
+</div>
