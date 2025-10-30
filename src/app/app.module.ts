@@ -31,7 +31,6 @@ import { NavColaboradorComponent } from './components/shared/nav-colaborador/nav
 import { InicioColaboradorComponent } from './components/colaborador/inicio-colaborador/inicio-colaborador.component';
 import { ContratoColaboradorComponent } from './components/colaborador/contrato-colaborador/contrato-colaborador.component';
 import { ResenaColaboradorComponent } from './components/colaborador/resena-colaborador/resena-colaborador.component';
-import { ChatColaboradorComponent } from './components/colaborador/chat-colaborador/chat-colaborador.component';
 import { NgxUiLoaderModule, NgxUiLoaderConfig, SPINNER, POSITION, PB_DIRECTION } from 'ngx-ui-loader';
 
 
@@ -69,9 +68,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     NavColaboradorComponent,
     InicioColaboradorComponent,
     ContratoColaboradorComponent,
-    ResenaColaboradorComponent,
-    ChatColaboradorComponent
-    ],
+    ResenaColaboradorComponent    ],
   imports: [
     BrowserModule,
     AppRoutingModule,

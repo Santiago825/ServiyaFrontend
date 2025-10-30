@@ -1,74 +1,125 @@
-<app-nav *ngIf="rol=='CONTRATANTE'"></app-nav>
-<app-nav-colaborador *ngIf="rol=='COLABORADOR'"></app-nav-colaborador>
+<app-nav *ngIf="rol == 'CONTRATANTE'"></app-nav>
+<app-nav-colaborador *ngIf="rol == 'COLABORADOR'"></app-nav-colaborador>
 
-<div class="chat-container" *ngIf="userData.connected">
-  <!-- 🔹 Lista de miembros -->
-  <div class="member-list" [class.hidden]="isMobileView && tab !== 'CHATROOM'">
-    <h3>Chats</h3>
-    <ul>
-      <li (click)="setTab('CHATROOM')" [class.active]="tab === 'CHATROOM'">
-        🌐 Chat público
-      </li>
-      <li
-        *ngFor="let name of privateChatsArray"
-        (click)="setTab(name)"
-        [class.active]="tab === name"
-      >
-        👤 {{ name }}
-      </li>
-    </ul>
+<div
+  class="flex flex-col h-[calc(100vh-6rem)] bg-gray-100 max-w-6xl mx-auto rounded-xl overflow-hidden shadow-md mt-2"
+>
+  <!-- Header -->
+  <div class="bg-white shadow-md py-4 px-6 flex items-center justify-between">
+    <h2 class="text-2xl font-bold text-[#7494ec]">💬 Mensajes Privados</h2>
+    <span class="text-gray-500 text-sm"
+      >Conectado como <strong>{{ username }}</strong></span
+    >
   </div>
 
-  <!-- 🔹 Chat -->
-  <div class="chat-box" [class.hidden]="isMobileView && tab === 'CHATROOM'">
-    <div class="chat-header">
-      <button *ngIf="isMobileView" class="back-btn" (click)="closeTab()">
-        ⬅
-      </button>
-      <h3 *ngIf="tab === 'CHATROOM'">Chat Público</h3>
-      <h3 *ngIf="tab !== 'CHATROOM'">Chat con {{ tab }}</h3>
-    </div>
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Sidebar -->
+    <aside
+      class="hidden md:flex flex-col w-1/4 bg-white overflow-y-auto"
+      style="scrollbar-width: thin"
+    >
+      <div class="p-4">
+        <h3 class="text-lg font-semibold text-[#7494ec]">Conversaciones</h3>
+      </div>
+      <ul class="flex-1 p-3 space-y-2">
+        <li
+          *ngFor="let user of privateChatsArray"
+          class="cursor-pointer p-2 rounded-lg text-gray-700 hover:bg-[#ebefff] transition"
+          [class.bg-[#dbe3ff]]="activeTab === user"
+          (click)="changeTab(user)"
+        >
+          👤 {{ user }}
+        </li>
+      </ul>
+    </aside>
 
-    <!-- Chat público -->
-    <ul *ngIf="tab === 'CHATROOM'" class="chat-messages" #publicChatMessages>
-      <li
-        *ngFor="let chat of publicChats"
-        [class.self]="chat.senderName === userData.username"
-      >
-        <div *ngIf="chat.senderName !== userData.username" class="avatar">
-          {{ chat.senderName[0] }}
-        </div>
-        <div class="message">
-          <div class="text">{{ chat.message }}</div>
-        </div>
-      </li>
-    </ul>
+    <!-- Mostrar mensaje cuando no hay chat seleccionado -->
+    <div
+      *ngIf="!activeTab"
+      class="flex-1 flex items-center justify-center bg-gray-50 text-gray-500 text-lg"
+    >
+      Selecciona una conversación para empezar a chatear 💬
+    </div>
 
     <!-- Chat privado -->
-    <ul *ngIf="tab !== 'CHATROOM'" class="chat-messages" #privateChatMessages>
-      <li
-        *ngFor="let chat of privateChats.get(tab)"
-        [class.self]="chat.senderName === userData.username"
+    <section
+      *ngIf="activeTab"
+      class="flex-1 flex flex-col bg-white"
+    >
+      <!-- Encabezado del chat -->
+      <div
+        class="p-4 bg-gray-50 flex items-center gap-3 shadow-sm border-b border-gray-200"
       >
-        <div *ngIf="chat.senderName !== userData.username" class="avatar">
-          {{ chat.senderName[0] }}
+        <div
+          class="w-10 h-10 flex items-center justify-center rounded-full bg-[#7494ec] text-white font-bold text-lg shadow-sm"
+        >
+          {{ activeTab.charAt(0).toUpperCase() }}
         </div>
-        <div class="message">
-          <div class="text">{{ chat.message }}</div>
-        </div>
-      </li>
-    </ul>
+        <h3 class="text-lg font-semibold text-gray-700">{{ activeTab }}</h3>
+      </div>
 
-    <div class="send-message">
-      <input
-        type="text"
-        placeholder="Escribe un mensaje..."
-        [(ngModel)]="userData.message"
-        (keydown.enter)="tab === 'CHATROOM' ? sendValue() : sendPrivateValue()"
-      />
-      <button (click)="tab === 'CHATROOM' ? sendValue() : sendPrivateValue()">
-        Enviar
-      </button>
-    </div>
+      <!-- Cuerpo del chat -->
+      <div
+        #scrollAnchor
+        class="flex-1 overflow-y-auto px-4 py-2 bg-gray-50 scroll-smooth"
+        style="scrollbar-width: thin"
+      >
+        <div
+          *ngIf="!privateChats.get(activeTab)?.length"
+          class="text-gray-400 text-center mt-20"
+        >
+          No hay mensajes con {{ activeTab }}.
+        </div>
+
+        <div
+          *ngFor="let msg of privateChats.get(activeTab)"
+          class="mb-3 flex items-end gap-2"
+        >
+          <div
+            *ngIf="msg.senderName !== username"
+            class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full bg-[#7494ec] text-white font-semibold"
+          >
+            {{ msg.senderName.charAt(0).toUpperCase() }}
+          </div>
+
+          <div
+            class="p-3 rounded-2xl max-w-[75%] shadow-sm"
+            [ngClass]="{
+              'ml-auto bg-[#7494ec] text-white rounded-br-none':
+                msg.senderName === username,
+              'bg-white text-gray-800 rounded-bl-none':
+                msg.senderName !== username
+            }"
+          >
+            <div
+              class="text-xs font-semibold mb-1 text-gray-600"
+              *ngIf="msg.senderName !== username"
+            >
+              {{ msg.senderName }}
+            </div>
+            <div class="text-sm leading-relaxed">{{ msg.message }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="p-3 flex items-center gap-3 bg-white shadow-inner border-t">
+        <input
+          type="text"
+          placeholder="Escribe un mensaje..."
+          [(ngModel)]="chatService.userData.message"
+          (keyup.enter)="sendMessage()"
+          class="flex-1 border border-gray-200 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7494ec]"
+        />
+        <button
+          (click)="sendMessage()"
+          class="bg-[#7494ec] text-white px-5 py-2 rounded-full hover:bg-[#5a7ce0] transition transform hover:scale-105"
+        >
+          ➤
+        </button>
+      </div>
+    </section>
   </div>
 </div>
+
+<app-footer></app-footer>

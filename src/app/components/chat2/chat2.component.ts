@@ -1,187 +1,172 @@
 import {
-  AfterViewChecked,
   Component,
-  ElementRef,
-  HostListener,
   OnInit,
+  OnDestroy,
+  AfterViewChecked,
   ViewChild,
+  ElementRef,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ChatService } from '../../services/chat/chat.service';
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
-import { UsuarioService } from 'src/app/services/Usuario/usuario.service';
-import { ActivatedRoute } from '@angular/router';
-import { PersonaService } from 'src/app/services/Persona/persona.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { UsuarioService } from '../../services/Usuario/usuario.service';
 
 @Component({
   selector: 'app-chat2',
   templateUrl: './chat2.component.html',
   styleUrls: ['./chat2.component.css'],
-  animations: [
-    trigger('slideFade', [
-      state(
-        'hidden',
-        style({
-          transform: 'translateX(100%)',
-          opacity: 0,
-        })
-      ),
-      state(
-        'visible',
-        style({
-          transform: 'translateX(0)',
-          opacity: 1,
-        })
-      ),
-      transition('hidden => visible', [animate('300ms ease-out')]),
-      transition('visible => hidden', [animate('300ms ease-in')]),
-    ]),
-  ],
 })
-export class Chat2Component implements OnInit, AfterViewChecked {
-  tab = 'CHATROOM';
+export class Chat2Component implements OnInit, OnDestroy, AfterViewChecked {
+  username: string = '';
+  activeTab: string = '';
+  messageSubscription!: Subscription;
+  rol!: any;
+  privateChats: Map<string, any[]> = new Map();
   privateChatsArray: string[] = [];
-  isMobileView: boolean = false;
-  rol:any;
-  @ViewChild('publicChatMessages') publicChatMessages!: ElementRef;
-  @ViewChild('privateChatMessages') privateChatMessages!: ElementRef;
+
+  @ViewChild('scrollAnchor') private scrollAnchor!: ElementRef;
 
   constructor(
     public chatService: ChatService,
-    public authService: AuthService,
-    private usuarioService: UsuarioService,
-    private personaService: PersonaService,
-    private route: ActivatedRoute
+    private authService: AuthService,
+    private usuarioService: UsuarioService
   ) {
-    const { username } = JSON.parse(localStorage.getItem('user') || '{}');
-    this.chatService.userData.username = username;
-    this.chatService.connect();
-
+    this.rol = authService.getRol();
   }
 
   ngOnInit(): void {
-    this.updateView();
+    const { idUsuario, username } = this.authService.getUser();
+    this.username = username;
 
-    this.rol = this.authService.getRol();
-    if (this.rol == 'COLABORADOR') {
-      this.usuarioService.obtenerUsuarios().subscribe({
-        next: (users) => {
-          const usuario = users['lista'];
-          // Inicializa las salas privadas
-          usuario.forEach((u: any) => {
-            if (u.username && !this.chatService.privateChats.has(u.username)) {
-              this.chatService.privateChats.set(u.username, []);
-            }
-          });
+    let obtenerUsuarios: ((id: number) => any) | undefined;
 
-          // Conecta el chat SOLO después
-          this.chatService.connect();
+    if (this.rol === 'COLABORADOR') {
+      obtenerUsuarios = this.usuarioService.obtenerSeguidoresColaborador.bind(
+        this.usuarioService
+      );
+    } else if (this.rol === 'CONTRATANTE') {
+      obtenerUsuarios = this.usuarioService.obtenerColaboradoresSeguidos.bind(
+        this.usuarioService
+      );
+    }
 
-          // Suscríbete a los mensajes
-          this.chatService.message$.subscribe(() => {
-            this.updatePrivateChatsArray();
-          });
+    // 🔹 Obtener lista de usuarios para chats privados
+    if (obtenerUsuarios) {
+      obtenerUsuarios(idUsuario).subscribe({
+        next: (resp: any) => {
+          if (resp && resp.lista) {
+            this.privateChatsArray = resp.lista
+              .map((col: any) => col.username)
+              .filter((name: string) => name !== this.username);
+
+            this.privateChatsArray.forEach((user) => {
+              if (!this.privateChats.has(user)) {
+                this.privateChats.set(user, []);
+              }
+            });
+          }
         },
         error: (err: any) => {
-          console.error('Error al cargar usuarios:', err);
-        },
-      });
-    } else if (this.rol == 'CONTRATANTE') {
-      this.usuarioService.obtenerColaboradoresSeguidos(1).subscribe({
-        next: (users) => {
-          const usuario = users['lista'];
-          // Inicializa las salas privadas
-          usuario.forEach((u: any) => {
-            if (u.username && !this.chatService.privateChats.has(u.username)) {
-              this.chatService.privateChats.set(u.username, []);
-            }
-          });
-
-          // Conecta el chat SOLO después
-          this.chatService.connect();
-
-          // Suscríbete a los mensajes
-          this.chatService.message$.subscribe(() => {
-            this.updatePrivateChatsArray();
-          });
-        },
-        error: (err: any) => {
-          console.error('Error al cargar usuarios:', err);
+          console.error('Error al obtener usuarios seguidos', err);
         },
       });
     }
+
+    // 🔌 Conectar usuario al WebSocket
+    this.chatService.connect(this.username);
+
+
+
+    // 🔄 Escuchar mensajes del socket
+    this.messageSubscription = this.chatService.message$.subscribe(
+      (payload) => {
+        if (!payload) return;
+
+        switch (payload.status) {
+          case 'JOIN':
+            if (
+              payload.senderName &&
+              payload.senderName !== this.username &&
+              !this.privateChats.has(payload.senderName)
+            ) {
+              this.privateChats.set(payload.senderName, []);
+              if (!this.privateChatsArray.includes(payload.senderName)) {
+                this.privateChatsArray.push(payload.senderName);
+              }
+            }
+            break;
+
+          case 'MESSAGE':
+            if (payload.receiverName === this.username) {
+              // 📥 Mensaje recibido (privado)
+              if (!this.privateChats.has(payload.senderName)) {
+                this.privateChats.set(payload.senderName, []);
+              }
+              this.privateChats.get(payload.senderName)?.push(payload);
+            } else if (payload.receiverName) {
+              // 📤 Mensaje enviado (privado)
+              if (!this.privateChats.has(payload.receiverName)) {
+                this.privateChats.set(payload.receiverName, []);
+              }
+              this.privateChats.get(payload.receiverName)?.push(payload);
+            } 
+            break;
+        }
+
+        this.scrollToBottom();
+      }
+    );
   }
 
-  @HostListener('window:resize')
-  updateView() {
-    this.isMobileView = window.innerWidth <= 768;
-  }
-
-  sendValue() {
-    if (this.userData.message.trim() !== '') {
-      this.chatService.sendValue();
-      this.userData.message = '';
-    }
-  }
-
-  sendPrivateValue() {
-    if (this.userData.message.trim() !== '') {
-      this.chatService.sendPrivateValue(this.tab);
-      this.userData.message = '';
-    }
-  }
-
-  setTab(name: string) {
-    this.tab = name;
-    setTimeout(() => this.scrollToBottom(), 50);
-  }
-
-  // 🔹 Volver a lista en móviles
-  closeTab() {
-    this.tab = 'CHATROOM';
-  }
-
-  updatePrivateChatsArray() {
-    this.privateChatsArray = Array.from(this.chatService.privateChats.keys());
-  }
-
-  get userData() {
-    return this.chatService.userData;
-  }
-
-  get publicChats() {
-    return this.chatService.publicChats;
-  }
-
-  get privateChats() {
-    return this.chatService.privateChats;
-  }
-
-  ngAfterViewChecked() {
+  ngAfterViewChecked(): void {
     this.scrollToBottom();
   }
 
+  // ✅ Enviar mensaje
+  sendMessage(): void {
+    const message = this.chatService.userData.message.trim();
+    if (!message) return;
+
+   
+      this.chatService.sendPrivateValue(this.activeTab);
+    
+
+    setTimeout(() => this.scrollToBottom(), 100);
+  }
+
+  // ✅ Cambiar entre chat público o privado
+  changeTab(tab: string): void {
+    this.activeTab = tab;
+
+    
+      this.chatService.obtenerMensajesPrivados(this.username, tab).subscribe({
+        next: (msgs) => {
+          this.privateChats.set(tab, msgs);
+          setTimeout(() => this.scrollToBottom(), 100);
+
+        },
+        error: (err) => console.error('Error al cargar mensajes privados:', err),
+      });
+    
+
+  }
+
+  // ✅ Desplazar el chat hacia el final automáticamente
   private scrollToBottom(): void {
     try {
-      const chatList =
-        this.tab === 'CHATROOM'
-          ? this.publicChatMessages?.nativeElement
-          : this.privateChatMessages?.nativeElement;
-
-      if (chatList) {
-        chatList.scrollTo({
-          top: chatList.scrollHeight,
-          behavior: 'smooth',
-        });
+      const container = this.scrollAnchor?.nativeElement;
+      if (container) {
+        container.scrollTop = container.scrollHeight;
       }
     } catch (err) {
-      console.warn('Error en scroll automático:', err);
+      console.warn('No se pudo desplazar automáticamente:', err);
     }
+  }
+
+  ngOnDestroy(): void {
+    if (this.messageSubscription) {
+      this.messageSubscription.unsubscribe();
+    }
+    this.chatService.disconnect();
   }
 }

@@ -34,4 +34,18 @@ export class UsuarioService {
       }
     );
   }
+  obtenerSeguidoresColaborador(idUsuario: number): Observable<any> {
+    const token = this.auth.getToken();
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return this.http.get<any>(
+      environment.urlApiPrivate + 'obtener_seguidores_colaborador/' + idUsuario,
+      {
+        headers,
+      }
+    );
+  }
 }

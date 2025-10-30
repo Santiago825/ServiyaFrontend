@@ -15,7 +15,6 @@ import { ResgistroCompletoComponent } from './components/resgistro-completo/resg
 import { RegistroGuard } from './guards/registro.guard';
 import { InicioColaboradorComponent } from './components/colaborador/inicio-colaborador/inicio-colaborador.component';
 import { RoleGuard } from './guards/role.guard'; // 👈 nuevo import
-import { ChatColaboradorComponent } from './components/colaborador/chat-colaborador/chat-colaborador.component';
 import { ResenaColaboradorComponent } from './components/colaborador/resena-colaborador/resena-colaborador.component';
 import { ContratoColaboradorComponent } from './components/colaborador/contrato-colaborador/contrato-colaborador.component';
 import { CONSTANTES } from './constants/constants';
@@ -35,7 +34,6 @@ const routes: Routes = [
 
   // 🔹 Colaborador
 { path: 'inicio-colaborador', component: InicioColaboradorComponent, canActivate: [AuthGuard,RoleGuard],data: { roles: [CONSTANTES.COLABORADOR],animation: 'InicioCPage' } },
-{ path: 'chat-colaborador', component: ChatColaboradorComponent, canActivate: [AuthGuard,RoleGuard],data: { roles: [CONSTANTES.COLABORADOR],animation: 'ChatCPage' } },
 { path: 'resena-colaborador', component: ResenaColaboradorComponent, canActivate: [AuthGuard,RoleGuard],data: { roles: [CONSTANTES.COLABORADOR],animation: 'resenaPage' } },
 { path: 'contrato-colaborador', component: ContratoColaboradorComponent, canActivate: [AuthGuard,RoleGuard],data: { roles: [CONSTANTES.COLABORADOR],animation: 'ContratoPage' } },
 
