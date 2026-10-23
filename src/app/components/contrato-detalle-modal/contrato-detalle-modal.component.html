@@ -1,0 +1,77 @@
+<div
+  *ngIf="contrato as c"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="titulo-contrato-detalle"
+>
+  <div class="absolute inset-0 bg-black/50" (click)="cerrar.emit()"></div>
+
+  <div
+    @fadeZoom
+    class="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-2 md:mx-0 p-6 md:p-8 z-10 overflow-y-auto"
+    style="max-height: 90vh"
+  >
+    <button
+      type="button"
+      (click)="cerrar.emit()"
+      class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold"
+      aria-label="Cerrar"
+    >
+      &times;
+    </button>
+
+    <h2 id="titulo-contrato-detalle" class="text-xl md:text-3xl font-bold text-[#7494ec] mb-2 text-center">
+      {{ c.nombreContrato }}
+    </h2>
+    <div class="text-center mb-6">
+      <span class="px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="clases[c.estado]">{{
+        etiqueta[c.estado]
+      }}</span>
+    </div>
+
+    <div class="flex flex-col md:flex-row justify-between items-center md:items-start gap-6 mb-6">
+      <div *ngIf="mostrarFoto && fotoSrc(c.foto) as foto" class="flex justify-center md:justify-end w-full md:w-auto order-1 md:order-2">
+        <img
+          [src]="foto"
+          alt="Foto del colaborador"
+          class="w-32 h-32 md:w-28 md:h-28 rounded-full object-cover border-4 border-[#7494ec] shadow-lg"
+        />
+      </div>
+
+      <!-- Solo lectura -->
+      <div class="flex-1 space-y-3 text-base md:text-lg order-2 md:order-1">
+        <p><strong>Contratante:</strong> {{ c.nombreContratante }}</p>
+        <p><strong>Colaborador:</strong> {{ c.nombreColaborador }}</p>
+        <p><strong>Dirección:</strong> {{ c.direccion }}</p>
+        <p><strong>Teléfono:</strong> {{ c.telefono }}</p>
+        <p><strong>Fecha inicio:</strong> {{ c.fechaInicio | date : 'dd/MM/yyyy' }}</p>
+        <p><strong>Fecha fin:</strong> {{ c.fechaFin | date : 'dd/MM/yyyy' }}</p>
+        <p><strong>Precio:</strong> {{ c.precio | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}</p>
+        <p class="break-words"><strong>Descripción:</strong> {{ c.descripcion }}</p>
+        <p *ngIf="c.nombreArchivo"><strong>Archivo adjunto:</strong> {{ c.nombreArchivo }}</p>
+        <p *ngIf="!c.nombreArchivo" class="text-gray-400 text-sm italic">Este contrato no tiene archivo adjunto.</p>
+      </div>
+    </div>
+
+    <!-- Descarga del adjunto (solo si hay) -->
+    <div *ngIf="c.nombreArchivo" class="text-center mb-2">
+      <button
+        type="button"
+        class="text-[#7494ec] hover:text-blue-700 flex items-center justify-center gap-2 mx-auto"
+        (click)="descargar()"
+      >
+        <i class="fas fa-download"></i> Descargar archivo adjunto
+      </button>
+    </div>
+
+    <!-- Respuesta (si ya la hubo) y acciones que añada la pantalla que lo usa -->
+    <div class="mt-6 pt-4 border-t">
+      <p *ngIf="c.estado !== 'PENDIENTE'" class="text-center text-gray-600">
+        Contrato {{ etiqueta[c.estado] | lowercase }}
+        <span *ngIf="c.fechaRespuesta">el {{ c.fechaRespuesta | date : 'dd/MM/yyyy' }}</span>.
+      </p>
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

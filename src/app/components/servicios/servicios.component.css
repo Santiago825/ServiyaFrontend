@@ -1,0 +1,11 @@
+/* Tamaño normal para escritorio */
+.collaborators-title {
+  font-size: 1.875rem; /* equivale a text-3xl */
+}
+
+/* Ajuste en móvil */
+@media (max-width: 768px) {
+  .collaborators-title {
+    font-size: 1.5rem; /* un poco más pequeño en móvil */
+  }
+}

@@ -1,0 +1,38 @@
+/* You can add global styles to this file, and also import other style files */
+/* Footer siempre abajo: la app ocupa como mínimo toda la altura de la ventana
+   y el contenido de la página se estira para empujar el footer al fondo. */
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* <main> crece para ocupar el espacio sobrante */
+app-root > main {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* El componente de cada página (lo que pinta el router-outlet) también se estira */
+app-root > main > *:not(router-outlet) {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* El footer se pega al fondo de la página */
+app-footer {
+  margin-top: auto;
+}
+app-root > main > *:not(router-outlet) > .mx-auto,
+app-root > main > *:not(router-outlet) > .container,
+app-root > main > *:not(router-outlet) > .search-bar-container {
+  width: 100%;
+}

@@ -1,0 +1,216 @@
+<app-nav></app-nav>
+
+<!-- 🔹 Formulario de búsqueda -->
+<div class="flex justify-center mt-10 px-4">
+  <form
+    [formGroup]="formBusqueda"
+    (ngSubmit)="obtenerColaboradores()"
+    class="w-full max-w-3xl flex flex-col md:flex-row gap-4 items-stretch md:items-center bg-white p-4 rounded-lg shadow-md"
+  >
+    <select formControlName="servicio" class="border border-gray-300 rounded-md p-2 flex-1">
+      <option [ngValue]="null" disabled>Selecciona un servicio</option>
+      <option *ngFor="let servicio of servicios" [ngValue]="servicio.idServicio">
+        {{ servicio.nombre }}
+      </option>
+    </select>
+
+    <select
+      formControlName="departamento"
+      (change)="onDepartamentoChange()"
+      class="border border-gray-300 rounded-md p-2 flex-1"
+    >
+      <option [ngValue]="null" disabled>Selecciona un departamento</option>
+      <option *ngFor="let dep of departamentos" [ngValue]="dep.idDepartamento">
+        {{ dep.nombre }}
+      </option>
+    </select>
+
+    <select
+      formControlName="municipio"
+      class="border border-gray-300 rounded-md p-2 flex-1"
+      [disabled]="!municipios.length"
+    >
+      <option [ngValue]="null" disabled>Selecciona un municipio</option>
+      <option *ngFor="let muni of municipios" [ngValue]="muni.idMunicipio">
+        {{ muni.nombre }}
+      </option>
+    </select>
+
+    <button
+      type="submit"
+      class="bg-[#7494ec] text-white px-6 py-2 rounded-md hover:bg-[#5a78d1] transition cursor-pointer"
+    >
+      <i class="fas fa-search"></i> Buscar
+    </button>
+  </form>
+</div>
+
+<!-- 🔹 Mensaje inicial -->
+<div *ngIf="!hasSearched" class="flex justify-center mt-10 px-4">
+  <div class="bg-white border border-gray-200 shadow-md rounded-lg p-6 max-w-md w-full text-center">
+    <i class="fas fa-users text-4xl text-[#7494ec] mb-3"></i>
+    <h3 class="text-lg font-semibold text-gray-800">
+      {{ 'CU_SERVICIOS.TITULO_NO_HAY_COLABORADORES' | translate }}
+    </h3>
+    <p class="text-gray-600 mt-2">
+      {{ 'CU_SERVICIOS.TITULO_REALIZAR_BUSQUEDA' | translate }}
+    </p>
+  </div>
+</div>
+
+<!-- 🔹 Lista de colaboradores -->
+<div *ngIf="hasSearched" class="flex flex-col items-center mt-8">
+  <h2 class="text-3xl font-bold text-[#7494ec] mb-6 flex items-center gap-3">
+    <i class="fas fa-users"></i>
+    {{ 'CU_SERVICIOS.TITULO_NUESTROS_COLABORADORES' | translate }}
+  </h2>
+
+  <div
+    *ngIf="showCollaborators; else sinResultados"
+    class="grid gap-6 p-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl w-full"
+  >
+    <div
+      *ngFor="let c of colaboradores"
+      class="flex flex-col bg-white rounded-lg shadow-md p-4 transition hover:shadow-lg"
+    >
+      <div class="flex items-center">
+        <img
+          [src]="getImageSrc(c.foto)"
+          [alt]="c.nombre"
+          class="w-24 h-24 rounded-full object-cover"
+        />
+        <div class="ml-4">
+          <h2 class="font-bold text-lg text-gray-800">{{ c.nombre }}</h2>
+          <p class="text-sm text-gray-600">⭐ {{ c.numero_resenas || 0 }} reseñas</p>
+          <p class="text-sm text-gray-600">{{ c.municipio }}</p>
+          <p class="text-sm text-gray-600">{{ c.servicio }}</p>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <button
+          class="px-4 py-2 text-sm bg-[#7494ec] text-white rounded hover:bg-[#5a78d1] transition"
+          (click)="openModal(c)"
+        >
+          Ver perfil
+        </button>
+        <button
+          (click)="toggleSeguirColaborador(c)"
+          class="px-4 py-2 text-sm border border-[#7494ec] text-[#7494ec] rounded hover:bg-[#e8ecfa] transition"
+        >
+          {{ c.seguido == 1 ? 'Dejar de seguir' : 'Seguir' }}
+        </button>
+       
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 Sin resultados -->
+  <ng-template #sinResultados>
+    <div class="flex justify-center mt-10 px-4">
+      <div class="bg-white border border-gray-200 shadow-md rounded-lg p-6 max-w-md w-full text-center">
+        <i class="fas fa-search text-4xl text-[#7494ec] mb-3"></i>
+        <h3 class="text-lg font-semibold text-gray-800">
+          {{ 'CU_SERVICIOS.TITULO_SIN_RESULTADOS' | translate }}
+        </h3>
+        <p class="text-gray-600 mt-2">
+          {{ 'CU_SERVICIOS.TITULO_NO_SE_ENCONTRARON' | translate }}
+        </p>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- 🔹 Modal de colaborador -->
+  <div *ngIf="showModal" class="fixed inset-0 z-50" (click)="closeModal()">
+    <div
+      class="absolute inset-0 transition-opacity duration-300"
+      [ngClass]="{ 'opacity-100': animateModal, 'opacity-0': !animateModal }"
+      style="background-color: rgba(107,114,128,0.45)"
+    ></div>
+
+    <div class="relative flex items-center justify-center min-h-screen p-4">
+      <div
+        *ngIf="selectedColaborador"
+        class="bg-white rounded-lg shadow-lg max-w-2xl w-full p-6 transform transition-all duration-300"
+        (click)="$event.stopPropagation()"
+        [ngClass]="{
+          'opacity-100 scale-100 translate-y-0': animateModal,
+          'opacity-0 scale-95 -translate-y-4': !animateModal
+        }"
+      >
+        <button
+          class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl"
+          (click)="closeModal()"
+        >
+          &times;
+        </button>
+
+        <div class="flex items-center gap-4">
+          <img
+            [src]="selectedColaborador.foto"
+            [alt]="selectedColaborador.nombre"
+            class="w-28 h-28 rounded-full object-cover shadow-md"
+          />
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800">
+              {{ selectedColaborador.nombre }}
+            </h2>
+            <p class="text-sm text-gray-600 flex items-center gap-2">
+              <app-estrellas [valor]="selectedColaborador.promedio"></app-estrellas>
+              <span *ngIf="selectedColaborador.resenas > 0; else sinResenas">
+                {{ selectedColaborador.promedio | number : '1.1-1' }} ·
+                {{ selectedColaborador.resenas }} {{ 'CU_SERVICIOS.TITULO_RESENAS' | translate }}
+              </span>
+              <ng-template #sinResenas><span>Sin reseñas aún</span></ng-template>
+            </p>
+            <p class="text-sm text-gray-600">
+              <i class="fas fa-map-marker-alt"></i> {{ selectedColaborador.ciudad }}
+            </p>
+            <p class="text-sm text-gray-600">
+              <i class="fas fa-tools"></i> {{ selectedColaborador.categoria }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-4 text-gray-700">
+          <p><strong>📞 Teléfono:</strong> {{ selectedColaborador.telefono }}</p>
+          <p><strong>📧 Correo:</strong> {{ selectedColaborador.correo }}</p>
+          <p class="mt-2">{{ selectedColaborador.descripcion }}</p>
+        </div>
+
+        <h4 class="text-lg font-semibold text-gray-800 mt-4 mb-2">Reseñas:</h4>
+        <div class="max-h-56 overflow-y-auto border border-gray-200 rounded p-2">
+          <p *ngIf="selectedColaborador.comentarios.length === 0" class="text-sm text-gray-500 text-center py-4">
+            Este colaborador aún no tiene reseñas.
+          </p>
+          <div
+            *ngFor="let comentario of selectedColaborador.comentarios"
+            class="mb-2 border-b border-gray-100 pb-2 last:border-b-0 last:mb-0"
+          >
+            <p class="text-sm font-semibold text-[#7494ec]">{{ comentario.usuario }}</p>
+            <app-estrellas class="text-sm" [valor]="comentario.estrellas"></app-estrellas>
+            <p *ngIf="comentario.texto" class="text-sm text-gray-700 mt-1">{{ comentario.texto }}</p>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6">
+          <button
+            (click)="toggleSeguirColaborador(selectedColaborador)"
+            class="px-4 py-2 text-sm border border-[#7494ec] text-[#7494ec] rounded hover:bg-[#e8ecfa] transition"
+          >
+            {{ selectedColaborador.seguido == 1 ? 'Dejar de seguir' : 'Seguir' }}
+          </button>
+
+          <button
+            class="px-4 py-2 border border-[#7494ec] text-[#7494ec] rounded hover:bg-[#e8ecfa] transition"
+            (click)="obtenerCvColaborador(selectedColaborador)"
+          >
+            <i class="fas fa-envelope"></i> Descargar Cv
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

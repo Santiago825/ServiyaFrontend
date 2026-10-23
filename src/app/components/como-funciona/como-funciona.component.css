@@ -1,0 +1,136 @@
+ /* Estilo para la página completa */
+    .how-it-works-page {
+      padding: 50px 20px;
+      text-align: center;
+      background-color: #f7f9fc; /* Fondo muy claro */
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Títulos y Subtítulos */
+    .main-title {
+      font-size: 2.8rem;
+      color: #1a202c; /* Negro oscuro */
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #4a5568;
+      margin-bottom: 60px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Contenedor principal de los pasos (usando Grid para la distribución) */
+    .steps-container {
+      display: grid;
+      /* 2 columnas en escritorio */
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 40px;
+      max-width: 1100px;
+      margin: 0 auto 60px;
+    }
+
+    /* Tarjeta individual de cada paso: MEJORADA */
+    .step-card {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 20px; /* Más redondeado */
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Sombra más profunda pero suave */
+      transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
+      text-align: left;
+    }
+
+    .step-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12); /* Sombra al pasar el ratón */
+    }
+
+    /* Contenedor del ícono y el número */
+    .step-icon-wrapper {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    /* Número de Paso */
+    .step-id {
+      background-color: #7494ec; /* Azul primario fuerte */
+      color: white;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-right: 20px;
+      /* Pequeña sombra para pop-out */
+      box-shadow: 0 3px 6px rgba(0, 123, 255, 0.5); 
+    }
+
+    /* Estilo directo para el elemento <i> de Font Awesome */
+    .step-card i {
+      font-size: 2.5rem; 
+      color: #7494ec; /* Color azul para el ícono */
+    }
+
+    .step-title {
+      color: #1a202c;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    .step-description {
+      color: #718096;
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    /* Sección de Llamada a la Acción (CTA) */
+    .cta-section {
+      padding: 30px 20px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(90deg, #7494ec, #0056b3); /* Degradado */
+      color: white;
+      padding: 15px 45px;
+      border: none;
+      border-radius: 30px;
+      text-decoration: none;
+      font-size: 1.25rem;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .cta-button:hover {
+      background: linear-gradient(90deg, #0056b3, #007bff);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
+    }
+
+    /* Media Query para Móviles */
+    @media (max-width: 768px) {
+      .steps-container {
+        /* Una sola columna en pantallas pequeñas */
+        grid-template-columns: 1fr; 
+        gap: 25px;
+      }
+
+      .main-title {
+        font-size: 2rem;
+      }
+      
+      .step-card {
+        padding: 30px 20px;
+      }
+    }

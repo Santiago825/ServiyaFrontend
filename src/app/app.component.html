@@ -1,0 +1,8 @@
+<ngx-ui-loader></ngx-ui-loader>
+
+
+<main [@routeAnimations]="prepareRoute(outlet)">
+  <router-outlet #outlet="outlet"></router-outlet>
+</main>
+
+<app-session-expired></app-session-expired>

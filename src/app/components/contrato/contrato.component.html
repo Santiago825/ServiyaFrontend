@@ -1,0 +1,117 @@
+<app-nav></app-nav>
+
+<div class="max-w-6xl mx-auto mt-8 p-6 bg-white rounded-xl shadow-lg">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-[#7494ec]">Contratos Registrados</h2>
+    <button
+      type="button"
+      (click)="cargar()"
+      class="text-sm text-[#7494ec] hover:text-blue-700 flex items-center gap-2"
+    >
+      <i class="fas fa-sync-alt"></i> Actualizar
+    </button>
+  </div>
+
+  <div *ngIf="contratos.length > 0; else noContratos" class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+      <thead class="bg-[#7494ec] text-white">
+        <tr>
+          <th class="px-4 py-2 text-left">Título del contrato</th>
+          <th class="px-4 py-2 text-left">Colaborador</th>
+          <th class="px-4 py-2 text-left">Dirección</th>
+          <th class="px-4 py-2 text-left">Precio (COP)</th>
+          <th class="px-4 py-2 text-center">Estado</th>
+          <th class="px-4 py-2 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of contratos" class="border-b hover:bg-gray-50">
+          <td class="px-4 py-2">{{ c.nombreContrato }}</td>
+          <td class="px-4 py-2">{{ c.nombreColaborador }}</td>
+          <td class="px-4 py-2">{{ c.direccion }}</td>
+          <td class="px-4 py-2">{{ c.precio | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}</td>
+          <td class="px-4 py-2 text-center">
+            <span
+              class="px-2 py-1 rounded-full text-xs font-semibold"
+              [ngClass]="clases[c.estado]"
+              >{{ etiqueta[c.estado] }}</span
+            >
+          </td>
+          <td class="px-4 py-2 text-center">
+            <button
+              (click)="verDetalle(c)"
+              class="text-[#7494ec] hover:text-blue-700"
+              title="Ver contrato"
+              aria-label="Ver contrato"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+
+            <!-- Reseñar: se habilita cuando el contrato fue aceptado y ya llegó su fecha de fin -->
+            <span class="inline-block ml-3" [title]="tituloResenar(c)">
+              <button
+                type="button"
+                (click)="abrirResena(c)"
+                [disabled]="!c.puedeResenar"
+                class="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full border transition"
+                [ngClass]="
+                  c.puedeResenar
+                    ? 'border-yellow-400 text-yellow-600 hover:bg-yellow-50'
+                    : 'border-gray-200 text-gray-400 cursor-not-allowed'
+                "
+              >
+                <i class="fas fa-star"></i> {{ c.resenado ? 'Reseñado' : 'Reseñar' }}
+              </button>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #noContratos>
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+      <i class="fas fa-folder-open text-[#7494ec] text-6xl mb-4"></i>
+      <h3 class="text-xl font-semibold text-gray-700 mb-2">No tienes contratos registrados</h3>
+      <p class="text-gray-500">Aún no hay ningún colaborador que te haya enviado un contrato.</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Modal de solo lectura -->
+<!-- Detalle del contrato (compartido). Aquí se le proyectan las acciones del contratante. -->
+<app-contrato-detalle-modal
+  *ngIf="idContratoDetalle as id"
+  [idContrato]="id"
+  (cerrar)="cerrarDetalle()"
+  (cargado)="alCargarDetalle($event)"
+>
+  <div
+    *ngIf="selectedContract?.estado === 'PENDIENTE'"
+    class="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end"
+  >
+    <button
+      type="button"
+      (click)="decidir(false)"
+      class="px-6 py-2 rounded-lg border border-red-500 text-red-600 hover:bg-red-50 transition flex items-center justify-center gap-2"
+    >
+      <i class="fas fa-times"></i> Rechazar
+    </button>
+    <button
+      type="button"
+      (click)="decidir(true)"
+      class="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition flex items-center justify-center gap-2"
+    >
+      <i class="fas fa-check"></i> Aceptar
+    </button>
+  </div>
+</app-contrato-detalle-modal>
+
+<app-resena-modal
+  *ngIf="contratoAResenar"
+  [contrato]="contratoAResenar"
+  (cerrar)="cerrarResena()"
+  (enviada)="alResenar()"
+></app-resena-modal>
+
+<app-footer></app-footer>

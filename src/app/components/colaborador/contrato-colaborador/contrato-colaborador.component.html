@@ -1,0 +1,262 @@
+<app-nav-colaborador></app-nav-colaborador>
+
+<div class="max-w-6xl mx-auto mt-8 p-6 bg-white rounded-xl shadow-lg">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <h2 class="text-2xl font-bold text-[#7494ec]">Mis contratos</h2>
+    <div class="flex items-center gap-4">
+      <button
+        type="button"
+        (click)="cargar()"
+        class="text-sm text-[#7494ec] hover:text-blue-700 flex items-center gap-2"
+      >
+        <i class="fas fa-sync-alt"></i> Actualizar
+      </button>
+      <button
+        type="button"
+        (click)="abrirFormulario()"
+        class="bg-[#7494ec] text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+      >
+        <i class="fas fa-plus"></i> Nuevo contrato
+      </button>
+    </div>
+  </div>
+
+  <!-- Resumen de decisiones -->
+  <div class="grid grid-cols-3 gap-3 mb-6 text-center">
+    <div class="rounded-lg bg-yellow-50 p-3">
+      <div class="text-2xl font-bold text-yellow-700">{{ pendientes }}</div>
+      <div class="text-xs text-yellow-700">Pendientes</div>
+    </div>
+    <div class="rounded-lg bg-green-50 p-3">
+      <div class="text-2xl font-bold text-green-700">{{ aceptados }}</div>
+      <div class="text-xs text-green-700">Aceptados</div>
+    </div>
+    <div class="rounded-lg bg-red-50 p-3">
+      <div class="text-2xl font-bold text-red-700">{{ rechazados }}</div>
+      <div class="text-xs text-red-700">Rechazados</div>
+    </div>
+  </div>
+
+  <div *ngIf="contratos.length > 0; else sinContratos" class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+      <thead class="bg-[#7494ec] text-white">
+        <tr>
+          <th class="px-4 py-2 text-left">Título</th>
+          <th class="px-4 py-2 text-left">Contratante</th>
+          <th class="px-4 py-2 text-left">Precio (COP)</th>
+          <th class="px-4 py-2 text-left">Vigencia</th>
+          <th class="px-4 py-2 text-center">Estado</th>
+          <th class="px-4 py-2 text-left">Respuesta</th>
+          <th class="px-4 py-2 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of contratos" class="border-b hover:bg-gray-50">
+          <td class="px-4 py-2">{{ c.nombreContrato }}</td>
+          <td class="px-4 py-2">{{ c.nombreContratante }}</td>
+          <td class="px-4 py-2">{{ c.precio | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}</td>
+          <td class="px-4 py-2 whitespace-nowrap">
+            {{ c.fechaInicio | date : 'dd/MM/yyyy' }} – {{ c.fechaFin | date : 'dd/MM/yyyy' }}
+          </td>
+          <td class="px-4 py-2 text-center">
+            <span
+              class="px-2 py-1 rounded-full text-xs font-semibold"
+              [ngClass]="clases[c.estado]"
+              >{{ etiqueta[c.estado] }}</span
+            >
+          </td>
+          <td class="px-4 py-2 text-sm text-gray-600">
+            <ng-container *ngIf="c.estado !== 'PENDIENTE'; else esperando">
+              <i
+                class="fas mr-1"
+                [ngClass]="c.estado === 'ACEPTADO' ? 'fa-check-circle text-green-600' : 'fa-times-circle text-red-600'"
+              ></i>
+              {{ c.estado === 'ACEPTADO' ? 'Aceptado' : 'Rechazado' }}
+              <span *ngIf="c.fechaRespuesta">el {{ c.fechaRespuesta | date : 'dd/MM/yyyy' }}</span>
+            </ng-container>
+            <ng-template #esperando
+              ><span class="italic text-gray-400">Esperando respuesta…</span></ng-template
+            >
+          </td>
+          <td class="px-4 py-2 text-center">
+            <button
+              type="button"
+              (click)="verDetalle(c)"
+              class="text-[#7494ec] hover:text-blue-700 text-lg"
+              title="Ver contrato"
+              aria-label="Ver contrato"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #sinContratos>
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+      <i class="fas fa-file-contract text-[#7494ec] text-6xl mb-4"></i>
+      <h3 class="text-xl font-semibold text-gray-700 mb-2">Aún no has creado contratos</h3>
+      <p class="text-gray-500">Pulsa «Nuevo contrato» para enviarle uno a un contratante.</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Formulario de nuevo contrato -->
+<div *ngIf="mostrarFormulario" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/40" (click)="cerrarFormulario()"></div>
+
+  <div
+    class="relative bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 md:p-8 z-10 overflow-y-auto"
+    style="max-height: 90vh"
+  >
+    <button
+      type="button"
+      (click)="cerrarFormulario()"
+      class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold"
+      aria-label="Cerrar"
+    >
+      &times;
+    </button>
+    <h3 class="text-2xl font-bold text-[#7494ec] mb-6 text-center">Nuevo contrato</h3>
+
+    <form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Contratante</label>
+        <select
+          formControlName="contratanteUsername"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7494ec]"
+        >
+          <option value="" disabled>Selecciona un contratante</option>
+          <option *ngFor="let u of contratantes" [value]="u.username">{{ u.username }}</option>
+        </select>
+        <p *ngIf="contratantes.length === 0" class="text-xs text-amber-600 mt-1">
+          Aún no tienes seguidores: un contratante debe seguirte para poder enviarle un contrato.
+        </p>
+        <p *ngIf="invalido('contratanteUsername')" class="text-xs text-red-600 mt-1">Selecciona un contratante.</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Título del contrato</label>
+        <input
+          type="text"
+          formControlName="nombre"
+          maxlength="150"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7494ec]"
+        />
+        <p *ngIf="invalido('nombre')" class="text-xs text-red-600 mt-1">El título es obligatorio.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+          <input
+            type="text"
+            formControlName="direccion"
+            maxlength="255"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7494ec]"
+          />
+          <p *ngIf="invalido('direccion')" class="text-xs text-red-600 mt-1">La dirección es obligatoria.</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+          <input
+            type="tel"
+            formControlName="telefono"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7494ec]"
+          />
+          <p *ngIf="invalido('telefono')" class="text-xs text-red-600 mt-1">Ingresa un teléfono válido.</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Precio (COP)</label>
+          <input
+            type="number"
+            min="1"
+            formControlName="precio"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7494ec]"
+          />
+          <p *ngIf="invalido('precio')" class="text-xs text-red-600 mt-1">Ingresa un precio mayor a cero.</p>
+        </div>
+        <div></div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de inicio</label>
+          <input
+            type="date"
+            [min]="hoy"
+            formControlName="fechaInicio"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7494ec]"
+          />
+          <p *ngIf="invalido('fechaInicio')" class="text-xs text-red-600 mt-1">Indica la fecha de inicio.</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de fin</label>
+          <input
+            type="date"
+            [min]="form.controls.fechaInicio.value || hoy"
+            formControlName="fechaFin"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7494ec]"
+          />
+          <p *ngIf="invalido('fechaFin')" class="text-xs text-red-600 mt-1">Indica la fecha de fin.</p>
+        </div>
+      </div>
+      <p *ngIf="form.hasError('rangoFechas')" class="text-xs text-red-600">
+        La fecha de fin no puede ser anterior a la de inicio.
+      </p>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción del servicio</label>
+        <textarea
+          formControlName="descripcion"
+          rows="4"
+          maxlength="255"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7494ec]"
+        ></textarea>
+        <div class="flex justify-between text-xs mt-1">
+          <span *ngIf="invalido('descripcion')" class="text-red-600">La descripción es obligatoria.</span>
+          <span class="text-gray-400 ml-auto">{{ form.controls.descripcion.value.length }}/255</span>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Archivo del contrato (opcional)</label>
+        <input
+          type="file"
+          accept=".pdf,.doc,.docx,application/pdf"
+          (change)="alElegirArchivo($event)"
+          class="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#ebefff] file:text-[#7494ec] hover:file:bg-[#dbe3ff]"
+        />
+        <p class="text-xs text-gray-400 mt-1">PDF o Word, máximo 5 MB.</p>
+        <p *ngIf="errorArchivo" class="text-xs text-red-600 mt-1">{{ errorArchivo }}</p>
+      </div>
+
+      <div class="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end pt-2">
+        <button
+          type="button"
+          (click)="cerrarFormulario()"
+          [disabled]="enviando"
+          class="px-6 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="enviando"
+          class="px-6 py-2 rounded-lg bg-[#7494ec] text-white hover:bg-blue-700 transition disabled:opacity-50"
+        >
+          {{ enviando ? 'Enviando…' : 'Enviar contrato' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Detalle del contrato (compartido): toda la información y la descarga del adjunto -->
+<app-contrato-detalle-modal
+  *ngIf="idContratoDetalle as id"
+  [idContrato]="id"
+  [mostrarFoto]="false"
+  (cerrar)="cerrarDetalle()"
+></app-contrato-detalle-modal>
+
+<app-footer></app-footer>

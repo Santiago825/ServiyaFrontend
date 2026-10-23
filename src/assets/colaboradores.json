@@ -1,0 +1,154 @@
+[
+  {
+    "id": 1,
+    "nombre": "Juan Pérez",
+    "resenas": 24,
+    "ciudad": "Bogotá",
+    "categoria": "Plomería",
+    "foto": "assets/img/foto_hombre.jpg",
+    "telefono": "+57 300 123 4567",
+    "correo": "juan.perez@example.com",
+    "descripcion": "Plomero con más de 10 años de experiencia en instalaciones y reparaciones residenciales.",
+    "comentarios": [
+      { "usuario": "María", "texto": "Muy puntual y cumplido, llegó a la hora exacta y solucionó el problema sin demoras.", "estrellas": 5 },
+      { "usuario": "Andrés", "texto": "Excelente trabajo en mi baño, dejó todo funcionando perfecto y limpio después de terminar.", "estrellas": 4 }
+    ]
+  },
+  {
+    "id": 2,
+    "nombre": "María López",
+    "resenas": 15,
+    "ciudad": "Medellín",
+    "categoria": "Electricidad",
+    "foto": "assets/img/foto_mujer.jpg",
+    "telefono": "+57 301 456 7890",
+    "correo": "maria.lopez@example.com",
+    "descripcion": "Especialista en electricidad industrial y residencial. Atención rápida y garantizada.",
+    "comentarios": [
+      { "usuario": "Carlos", "texto": "Resolvió mi problema de luz en minutos, tenía un corto en la cocina y lo dejó como nuevo.", "estrellas": 5 },
+      { "usuario": "Laura", "texto": "Muy recomendada y confiable, me explicó cada paso del trabajo y me dio consejos de seguridad.", "estrellas": 4 }
+    ]
+  },
+  {
+    "id": 3,
+    "nombre": "Carlos Ramírez",
+    "resenas": 32,
+    "ciudad": "Cali",
+    "categoria": "Carpintería",
+    "foto": "assets/img/foto_hombre.jpg",
+    "telefono": "+57 310 654 7890",
+    "correo": "carlos.ramirez@example.com",
+    "descripcion": "Carpintero profesional, fabricando muebles a medida y reparaciones de alta calidad.",
+    "comentarios": [
+      { "usuario": "Ana", "texto": "Me hizo un mueble hermoso y personalizado, quedó justo como lo quería y con excelentes acabados.", "estrellas": 5 },
+      { "usuario": "Sofía", "texto": "Muy detallista con los acabados, se nota la experiencia que tiene en carpintería fina.", "estrellas": 4 }
+    ]
+  },
+  {
+    "id": 4,
+    "nombre": "Ana Torres",
+    "resenas": 18,
+    "ciudad": "Barranquilla",
+    "categoria": "Aseo",
+    "foto": "assets/img/foto_mujer.jpg",
+    "telefono": "+57 311 222 3344",
+    "correo": "ana.torres@example.com",
+    "descripcion": "Experta en limpieza profunda de hogares y oficinas con atención al detalle.",
+    "comentarios": [
+      { "usuario": "Luis", "texto": "Mi apartamento quedó impecable, parecía nuevo después de la limpieza.", "estrellas": 5 },
+      { "usuario": "Carolina", "texto": "Muy profesional y amable, utilizó productos de buena calidad y dejó un aroma agradable.", "estrellas": 5 }
+    ]
+  },
+  {
+    "id": 5,
+    "nombre": "Luis Fernández",
+    "resenas": 27,
+    "ciudad": "Bogotá",
+    "categoria": "Construcción",
+    "foto": "assets/img/foto_hombre.jpg",
+    "telefono": "+57 312 111 2233",
+    "correo": "luis.fernandez@example.com",
+    "descripcion": "Maestro de obra con amplia experiencia en proyectos de construcción y remodelación.",
+    "comentarios": [
+      { "usuario": "Pedro", "texto": "Construyó mi casa con gran calidad y atención a los detalles, cumplió con los tiempos acordados.", "estrellas": 5 },
+      { "usuario": "Juliana", "texto": "Muy cumplido y organizado, siempre mantenía todo limpio en la obra y entregó un gran trabajo.", "estrellas": 4 }
+    ]
+  },
+  {
+    "id": 6,
+    "nombre": "Laura Gómez",
+    "resenas": 22,
+    "ciudad": "Medellín",
+    "categoria": "Plomería",
+    "foto": "assets/img/foto_mujer.jpg",
+    "telefono": "+57 313 987 6543",
+    "correo": "laura.gomez@example.com",
+    "descripcion": "Plomera certificada con servicios de emergencia disponibles las 24 horas.",
+    "comentarios": [
+      { "usuario": "Camilo", "texto": "Llegó rápido a la emergencia, solucionó una fuga de agua que estaba inundando la cocina.", "estrellas": 5 },
+      { "usuario": "Patricia", "texto": "Muy buena atención y solución inmediata, además fue muy amable al explicar el problema.", "estrellas": 4 }
+    ]
+  },
+  {
+    "id": 7,
+    "nombre": "Jorge Martínez",
+    "resenas": 40,
+    "ciudad": "Cali",
+    "categoria": "Electricidad",
+    "foto": "assets/img/foto_hombre.jpg",
+    "telefono": "+57 314 456 1122",
+    "correo": "jorge.martinez@example.com",
+    "descripcion": "Electricista especializado en instalaciones seguras y mantenimiento preventivo.",
+    "comentarios": [
+      { "usuario": "Samuel", "texto": "Muy profesional, dejó todo seguro y revisó toda la instalación eléctrica de la casa.", "estrellas": 5 },
+      { "usuario": "Manuela", "texto": "Excelente servicio y precio justo, me dio mucha confianza y tranquilidad.", "estrellas": 4 }
+    ]
+  },
+  {
+    "id": 8,
+    "nombre": "Paula Castro",
+    "resenas": 12,
+    "ciudad": "Barranquilla",
+    "categoria": "Aseo",
+    "foto": "assets/img/foto_mujer.jpg",
+    "telefono": "+57 315 555 6677",
+    "correo": "paula.castro@example.com",
+    "descripcion": "Servicios de limpieza ecológica con productos biodegradables.",
+    "comentarios": [
+      { "usuario": "Felipe", "texto": "Me encantó que usa productos ecológicos, perfectos para alguien con mascotas como yo.", "estrellas": 5 },
+      { "usuario": "Esteban", "texto": "Muy cumplida y detallista, dejó todo reluciente sin usar químicos agresivos.", "estrellas": 5 }
+    ]
+  },
+  {
+    "id": 9,
+    "nombre": "Andrés Ríos",
+    "resenas": 30,
+    "ciudad": "Bogotá",
+    "categoria": "Carpintería",
+    "foto": "assets/img/foto_hombre.jpg",
+    "telefono": "+57 316 888 9900",
+    "correo": "andres.rios@example.com",
+    "descripcion": "Especialista en carpintería fina y diseño de interiores personalizados.",
+    "comentarios": [
+      { "usuario": "Natalia", "texto": "Me hizo un clóset espectacular, aprovechó el espacio al máximo y quedó elegante.", "estrellas": 5 },
+      { "usuario": "Ricardo", "texto": "Muy creativo en los diseños, cumplió con todo lo que habíamos planeado.", "estrellas": 4 }
+    ]
+  },
+  {
+    "id": 10,
+    "nombre": "Sofía Morales",
+    "resenas": 19,
+    "ciudad": "Medellín",
+    "categoria": "Construcción",
+    "foto": "assets/img/foto_mujer.jpg",
+    "telefono": "+57 317 777 4455",
+    "correo": "sofia.morales@example.com",
+    "descripcion": "Ingeniera civil enfocada en obras pequeñas y remodelaciones.",
+    "comentarios": [
+      { "usuario": "Alejandro", "texto": "Reformó mi oficina con gran calidad, cumplió con los tiempos y me asesoró en los materiales.", "estrellas": 5 },
+      { "usuario": "Valeria", "texto": "Muy profesional y responsable, el resultado final superó mis expectativas.", "estrellas": 4 },
+      { "usuario": "Camila", "texto": "Excelente trato, respondió todas mis dudas y me mantuvo informada del avance.", "estrellas": 5 },
+      { "usuario": "Juan", "texto": "Quedé muy satisfecho con el trabajo, se nota que tiene gran experiencia en construcción.", "estrellas": 5 }
+    ]
+  }
+]
