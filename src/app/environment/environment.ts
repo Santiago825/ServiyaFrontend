@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   // Backend Spring Boot (desarrollo local)
-  urlHost: 'https://serviyabackend.onrender.com/',
-  urlApi: 'https://serviyabackend.onrender.com/public/',
-  urlApiPrivate: 'https://serviyabackend.onrender.com/private/',
+  urlHost: 'http://localhost:8080/',
+  urlApi: 'http://localhost:8080/public/',
+  urlApiPrivate: 'http://localhost:8080/private/',
 };
