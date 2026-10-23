@@ -1,0 +1,8 @@
+{
+  "name": "serviyafrontend",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist/servi-ya",
+    "not_found_handling": "single-page-application"
+  }
+}
